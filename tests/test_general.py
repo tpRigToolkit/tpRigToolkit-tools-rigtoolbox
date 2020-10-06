@@ -2,12 +2,12 @@
 # -*- coding: utf-8 -*-
 
 """
-Module that contains general tests for tpRigToolkit
+Module that contains general tests for tpRigToolkit-tools-rigtoolbox
 """
 
 import pytest
 
-from tpRigToolkit.tools.jointorient import __version__
+from tpRigToolkit.tools.rigtoolbox import __version__
 
 
 def test_version():
