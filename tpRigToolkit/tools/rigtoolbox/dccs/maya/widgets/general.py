@@ -18,11 +18,11 @@ LOGGER = tp.LogsMgr().get_logger('tpRigToolkit-tools-rigtoolbox')
 
 
 class GeneralWidget(base.BaseRigToolBoxWidget, object):
-    def __init__(self, parent=None):
+    def __init__(self, client, parent=None):
         super(GeneralWidget, self).__init__(title='General', parent=parent)
 
         self._model = GeneralWidgetModel()
-        self._controller = GeneralWidgetController(model=self._model)
+        self._controller = GeneralWidgetController(model=self._model, client=client)
 
         self._accordion = accordion.AccordionWidget()
         self.main_layout.addWidget(self._accordion)
@@ -149,10 +149,19 @@ class GeneralWidgetModel(QObject, object):
 
 class GeneralWidgetController(object):
 
-    def __init__(self, model):
+    def __init__(self, model, client):
         super(GeneralWidgetController, self).__init__()
 
         self._model = model
+        self._client = client
+
+    @property
+    def model(self):
+        return self._model
+
+    @property
+    def client(self):
+        return self._client
 
     @staticmethod
     @tp.Dcc.undo_decorator()

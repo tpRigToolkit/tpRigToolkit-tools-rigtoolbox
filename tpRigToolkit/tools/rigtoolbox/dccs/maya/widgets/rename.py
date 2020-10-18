@@ -25,4 +25,5 @@ class RenameWidget(base.BaseRigToolBoxWidget, object):
         rename_widget = renamer.RenamerToolsetWidget(
             names_config=names_config, naming_config=naming_config, parent=self)
         rename_widget.initialize()
+        rename_widget._title_frame.setVisible(False)
         self.main_layout.addWidget(rename_widget)

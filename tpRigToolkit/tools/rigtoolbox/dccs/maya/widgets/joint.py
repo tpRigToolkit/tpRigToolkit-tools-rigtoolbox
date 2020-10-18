@@ -20,11 +20,11 @@ LOGGER = tp.LogsMgr().get_logger('tpRigToolkit-tools-rigtoolbox')
 
 class JointWidget(base.BaseRigToolBoxWidget, object):
 
-    def __init__(self, parent=None):
+    def __init__(self, client, parent=None):
         super(JointWidget, self).__init__(title='Joint', parent=parent)
 
         self._model = JointWidgetModel()
-        self._controller = JointWidgetController(model=self._model)
+        self._controller = JointWidgetController(model=self._model, client=client)
 
         self._accordion = accordion.AccordionWidget()
         self.main_layout.addWidget(self._accordion)
@@ -435,10 +435,19 @@ class JointWidgetModel(QObject, object):
 
 class JointWidgetController(object):
 
-    def __init__(self, model):
+    def __init__(self, model, client):
         super(JointWidgetController, self).__init__()
 
         self._model = model
+        self._client = client
+
+    @property
+    def model(self):
+        return self._model
+
+    @property
+    def client(self):
+        return self._client
 
     def change_joints_to_insert(self, value):
         self._model.joints_to_insert = value

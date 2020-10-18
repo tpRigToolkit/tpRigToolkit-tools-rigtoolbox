@@ -17,4 +17,5 @@ class ControlWidget(base.BaseRigToolBoxWidget, object):
 
         ctrl_rig = controlrig.ControlRigToolset(collapsable=False, parent=self)
         ctrl_rig.initialize()
+        ctrl_rig._title_frame.setVisible(False)
         self.main_layout.addWidget(ctrl_rig)
