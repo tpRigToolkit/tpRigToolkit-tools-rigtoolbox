@@ -9,8 +9,8 @@ import tpDcc as tp
 class DockWidget(QDockWidget, object):
     closed = Signal(object)
 
-    def __init__(self, name):
-        super(DockWidget, self).__init__()
+    def __init__(self, name, parent=None):
+        super(DockWidget, self).__init__(parent=parent)
 
         self.setWindowTitle(name)
         self.setFeatures(QDockWidget.AllDockWidgetFeatures)
@@ -35,12 +35,15 @@ class DockTitleBar(QWidget, object):
         self._renamable = renamable
 
         main_layout = QHBoxLayout()
+        main_layout.setSpacing(1)
         main_layout.setContentsMargins(0, 0, 0, 1)
         self.setLayout(main_layout)
 
         self._buttons_box = QGroupBox('')
         self._buttons_box.setObjectName('Docked')
         self._buttons_layout = QHBoxLayout()
+        self._buttons_layout.setSpacing(0)
+        self._buttons_layout.setContentsMargins(0, 0, 0, 0)
         self._buttons_layout.setSpacing(1)
         self._buttons_layout.setMargin(2)
         self._buttons_box.setLayout(self._buttons_layout)
@@ -51,7 +54,7 @@ class DockTitleBar(QWidget, object):
         self._title_edit = QLineEdit(self)
         self._title_edit.setVisible(False)
 
-        self._button_size = QSize(14, 14)
+        self._button_size = QSize(15, 15)
 
         self._dock_btn = QToolButton(self)
         self._dock_btn.setIcon(tp.ResourcesMgr().icon('restore_window', theme='color'))

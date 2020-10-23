@@ -1,0 +1,140 @@
+delete_history:
+  name: Delete History
+  icon: delete_history
+  categories:
+    - General
+  description: Deletes the history of the selected nodes.
+  instructions: <ol><li>Select one or multiple transform nodes from viewport</li><li>Execute command</li></ol>
+
+freeze_transforms:
+  name: Freeze Transforms
+  icon: freeze_transforms
+  categories:
+    - General
+  description: Make the selected object's current transfomations be the zero position.
+  instructions: <ol><li>Select one or multiple transform nodes from viewport</li><li>Execute command</li></ol>
+
+move_pivot_to_zero:
+  name: Move Pivot to Zero
+  icon: center_pivot
+  categories:
+    - General
+  description: Move the transform pivot of the selected transform nodes to the (0, 0, 0) of the world.
+  instructions: <ol><li>Select one or multiple transform nodes from viewport</li><li>Execute command</li></ol>
+
+lock_all_transforms:
+  name: Lock Transforms
+  icon: lock
+  categories:
+      - General
+  description: Lock all the transfors channels (translate, rotate and scale) of the selected transform nodes.
+  instructions: <ol><li>Select one or multiple transform nodes from viewport</li><li>Execute command</li></ol>
+  options:
+    lock_translation:
+      name: Lock Translation
+      icon: lock
+      description: Lock all translation channels of the selected transform nodes.
+      instructions: <ol><li>Select one or multiple transform nodes from viewport</li><li>Execute command</li></ol>
+    lock_rotation:
+      name: Lock Rotation
+      icon: lock
+      description: Lock all rotation channels of the selected transform nodes.
+      instructions: <ol><li>Select one or multiple transform nodes from viewport</li><li>Execute command</li></ol>
+    lock_scale:
+      name: Lock Scale
+      icon: lock
+      description: Lock all scale channels of the selected transform nodes.
+      instructions: <ol><li>Select one or multiple transform nodes from viewport</li><li>Execute command</li></ol>
+
+unlock_all_transforms:
+  name: Unlock Transforms
+  icon: unlock
+  categories:
+    - General
+  description: Unlock all the transfors channels (translate, rotate and scale) of the selected transform nodes.
+  instructions: <ol><li>Select one or multiple transform nodes from viewport</li><li>Execute command</li></ol>
+  options:
+    unlock_translation:
+      name: Unock Translation
+      icon: unlock
+      description: Unlock all translation channels of the selected transform nodes.
+      instructions: <ol><li>Select one or multiple transform nodes from viewport</li><li>Execute command</li></ol>
+    unlock_rotation:
+      name: Unlock Rotation
+      icon: unlock
+      description: Unlock all rotation channels of the selected transform nodes.
+      instructions: <ol><li>Select one or multiple transform nodes from viewport</li><li>Execute command</li></ol>
+    unlock_scale:
+      name: Unlock Scale
+      icon: unlock
+      description: Unlock all scale channels of the selected transform nodes.
+      instructions: <ol><li>Select one or multiple transform nodes from viewport</li><li>Execute command</li></ol>
+
+lock_visibility:
+  name: Lock Visibility
+  icon: lock
+  categories:
+      - General
+  description: Lock visibility of the selected transform nodes.
+  instructions: <ol><li>Select one or multiple transform nodes from viewport</li><li>Execute command</li></ol>
+
+unlock_visibility:
+  name: Unlock Visibility
+  icon: unlock
+  categories:
+      - General
+  description: Unlock visibility channel of the selected transform nodes.
+  instructions: <ol><li>Select one or multiple transform nodes from viewport</li><li>Execute command</li></ol>
+
+match_transform:
+  name: Match Transform
+  icon: match_transform
+  categories:
+    - Transforms
+  description: Matches all the transforms of the selected source node to the transforms of the selected target nodes.
+  instructions: <ol><li>Select the source object you want to match transforms of</li><li>Select one or multiple target objects you want to match transforms again</li><li>Execute command</li></ol>
+
+match_translation:
+  name: Match Translation
+  icon: match_translation
+  categories:
+    - Transforms
+  description: Matches translation of the selected source node to translation of the selected target nodes.
+  instructions: <ol><li>Select the source object you want to match translation of</li><li>Select one or multiple target objects you want to match translation again</li><li>Execute command</li></ol>
+
+match_rotation:
+  name: Match Rotation
+  icon: match_rotation
+  categories:
+    - Transforms
+  description: Matches rotation of the selected source node to rotation of the selected target nodes.
+  instructions: <ol><li>Select the source object you want to match rotation of</li><li>Select one or multiple target objects you want to match rotation again</li><li>Execute command</li></ol>
+
+match_scale:
+  name: Match Scale
+  icon: match_scale
+  categories:
+    - Transforms
+  description: Matches scale of the selected source node to scale of the selected target nodes.
+  instructions: <ol><li>Select the source object you want to match scale of</li><li>Select one or multiple target objects you want to match scale again</li><li>Execute command</li></ol>
+
+combine_meshes:
+  name: Combine Meshes
+  icon: combine
+  categories:
+    - Geometry
+  description: Combines selected meshes into one. New mesh is parented to the parent of the first selected mesh.Press Shift before executing the command to type new mesh name. Pivot of the combine meshes will be located in the (0, 0, 0) of the world.
+  instructions: <ol><li>Select the transform nodes of the meshes you want to combine</li><li></li><li>Execute command</li></ol>
+
+mirror_meshes:
+  name: Mirror Meshes
+  icon: mirror
+  categories:
+    - Geometry
+
+open_symmetry_tool:
+  name: Symmetry Tool
+  icon: symmetry
+  categories:
+    - Geometry
+  description: Opens tpRigToolkit-tools-meshsymmetry

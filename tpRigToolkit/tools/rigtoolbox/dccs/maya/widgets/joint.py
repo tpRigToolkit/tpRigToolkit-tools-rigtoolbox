@@ -11,30 +11,22 @@ from Qt.QtCore import *
 from Qt.QtWidgets import *
 
 import tpDcc as tp
-from tpDcc.libs.qt.widgets import layouts, accordion, spinbox, buttons, checkbox
+from tpDcc.libs.qt.widgets import layouts, label, spinbox, buttons, checkbox
 
 from tpRigToolkit.tools.rigtoolbox.widgets import base
 
 LOGGER = tp.LogsMgr().get_logger('tpRigToolkit-tools-rigtoolbox')
 
 
-class JointWidget(base.BaseRigToolBoxWidget, object):
+class JointWidget(base.CommandRigToolBoxWidget, object):
 
-    def __init__(self, client, parent=None):
-        super(JointWidget, self).__init__(title='Joint', parent=parent)
+    def __init__(self, client, commands_data, parent=None):
 
         self._model = JointWidgetModel()
-        self._controller = JointWidgetController(model=self._model, client=client)
 
-        self._accordion = accordion.AccordionWidget()
-        self.main_layout.addWidget(self._accordion)
-
-        self._accordion.add_item('Create', self._setup_create_tools())
-        self._accordion.add_item('Display', self._setup_display_tools())
-        self._accordion.add_item('Select', self._setup_select_tools())
-        self._accordion.add_item('Orient', self._setup_orient_tools())
-        self._accordion.add_item('Mirror', self._setup_mirror_tools())
-        self._accordion.add_item('Pose', self._setup_pose_tools())
+        super(JointWidget, self).__init__(
+            title='Joint', commands_data=commands_data,
+            controller=JointWidgetController(model=self._model, client=client), parent=parent)
 
         self.refresh()
 
@@ -46,75 +38,62 @@ class JointWidget(base.BaseRigToolBoxWidget, object):
     def controller(self):
         return self._controller
 
-    def refresh(self):
-        self._joints_to_insert_spn.setValue(self._model.joints_to_insert)
-        self._joints_display_size_spn.setValue(self._model.joints_display_size)
-        self._joints_display_size_live_cbx.setChecked(self._model.joints_display_size_live)
-        self._create_joints_on_curve_spn.setValue(self._model.joints_on_curve)
-        self._snap_joints_to_curve_spn.setValue(self._model.snap_joints_to_curve)
+    def ui(self):
+        super(JointWidget, self).ui()
 
-    def _setup_create_tools(self):
-        setup_widget = QWidget()
-        self.create_layout = layouts.FlowLayout()
-        self.create_layout.setAlignment(Qt.AlignLeft)
-        setup_widget.setLayout(self.create_layout)
-        joint_icon = tp.ResourcesMgr().icon('joint', extension='png')
-
-        joint_tool_btn = self._create_button('Joint Tool', joint_icon, self._controller.start_joint_tool)
-
-        new_joint_btn = self._create_button('New Joint', joint_icon, self._controller.create_new_joint_on_center)
-
-        new_joints_btn = self._create_button(
-            'New Joints on Components', joint_icon, self._controller.create_new_joints_on_selected_components)
-
-        insert_joint_widget = QWidget()
-        insert_joint_layout = layouts.HorizontalLayout(spacing=0, margins=(0, 0, 0, 0))
-        insert_joint_widget.setLayout(insert_joint_layout)
-        insert_joint_btn = self._create_button('Insert Joint(s)', joint_icon, self._controller.insert_joints)
+        self._joints_to_insert_widget = QWidget()
+        joints_to_insert_layout = layouts.HorizontalLayout(spacing=0, margins=(0, 0, 0, 0))
+        self._joints_to_insert_widget.setLayout(joints_to_insert_layout)
+        joints_to_insert_lbl = label.BaseLabel('Num. Joints: ', parent=self)
         self._joints_to_insert_spn = spinbox.BaseSpinBox(parent=self)
-        self._joints_to_insert_spn.setMinimumWidth(50)
         self._joints_to_insert_spn.setMinimum(1)
-        self._joints_to_insert_spn.setMaximumWidth(99)
-        insert_joint_layout.addWidget(insert_joint_btn)
-        insert_joint_layout.addWidget(self._joints_to_insert_spn)
+        self._joints_to_insert_spn.setMaximum(99999999)
+        joints_to_insert_layout.addWidget(joints_to_insert_lbl)
+        joints_to_insert_layout.addWidget(self._joints_to_insert_spn)
 
-        create_joints_on_curve_widget = QWidget()
+        self._create_joints_on_curve_widget = QWidget()
         create_joints_on_curve_layout = layouts.HorizontalLayout(spacing=0, margins=(0, 0, 0, 0))
-        create_joints_on_curve_widget.setLayout(create_joints_on_curve_layout)
-        create_joints_on_curve_btn = self._create_button('Create Joints On Curve', joint_icon, self._controller.create_joints_on_curve)
+        self._create_joints_on_curve_widget.setLayout(create_joints_on_curve_layout)
+        create_joints_on_curve_lbl = label.BaseLabel('Num. Joints: ', parent=self)
         self._create_joints_on_curve_spn = spinbox.BaseSpinBox(parent=self)
-        self._create_joints_on_curve_spn.setMaximumWidth(50)
         self._create_joints_on_curve_spn.setMinimum(1)
         self._create_joints_on_curve_spn.setMaximum(99999999)
-        create_joints_on_curve_layout.addWidget(create_joints_on_curve_btn)
+        create_joints_on_curve_layout.addWidget(create_joints_on_curve_lbl)
         create_joints_on_curve_layout.addWidget(self._create_joints_on_curve_spn)
 
-        snap_joints_to_curve_widget = QWidget()
+        self._snap_joints_to_curve_widget = QWidget()
         snap_joints_to_curve_layout = layouts.HorizontalLayout(spacing=0, margins=(0, 0, 0, 0))
-        snap_joints_to_curve_widget.setLayout(snap_joints_to_curve_layout)
-        snap_joints_to_curve_btn = self._create_button('Snap Joints to Curve', joint_icon, self._controller.snap_joints_to_curve)
+        self._snap_joints_to_curve_widget.setLayout(snap_joints_to_curve_layout)
+        snap_joints_to_curve_lbl = label.BaseLabel('Num. Joints: ', parent=self)
         self._snap_joints_to_curve_spn = spinbox.BaseSpinBox(parent=self)
-        self._snap_joints_to_curve_spn.setMaximumWidth(50)
         self._snap_joints_to_curve_spn.setMinimum(0)
         self._snap_joints_to_curve_spn.setMaximum(99999999)
-        snap_joints_to_curve_layout.addWidget(snap_joints_to_curve_btn)
+        snap_joints_to_curve_layout.addWidget(snap_joints_to_curve_lbl)
         snap_joints_to_curve_layout.addWidget(self._snap_joints_to_curve_spn)
 
-        self.create_layout.addWidget(joint_tool_btn)
-        self.create_layout.addWidget(new_joint_btn)
-        self.create_layout.addWidget(new_joints_btn)
-        self.create_layout.addWidget(insert_joint_widget)
-        self.create_layout.addWidget(create_joints_on_curve_widget)
-        self.create_layout.addWidget(snap_joints_to_curve_widget)
+        self._joints_to_insert_widget.setVisible(False)
+        self._create_joints_on_curve_widget.setVisible(False)
+        self._snap_joints_to_curve_widget.setVisible(False)
 
+        self.main_layout.addWidget(self._joints_to_insert_widget)
+        self.main_layout.addWidget(self._create_joints_on_curve_widget)
+        self.main_layout.addWidget(self._snap_joints_to_curve_widget)
+
+    def setup_signals(self):
         self._joints_to_insert_spn.valueChanged.connect(self._controller.change_joints_to_insert)
         self._create_joints_on_curve_spn.valueChanged.connect(self._controller.change_joints_on_curve)
         self._snap_joints_to_curve_spn.valueChanged.connect(self._controller.change_snap_joints_to_curve)
 
         self._model.jointsToInsertChanged.connect(self._joints_to_insert_spn.setValue)
+        self._model.jointsOnCurveChanged.connect(self._create_joints_on_curve_spn.setValue)
         self._model.snapJointsToCurveChanged.connect(self._snap_joints_to_curve_spn.setValue)
 
-        return setup_widget
+    def refresh(self):
+        self._joints_to_insert_spn.setValue(self._model.joints_to_insert)
+        # self._joints_display_size_spn.setValue(self._model.joints_display_size)
+        # self._joints_display_size_live_cbx.setChecked(self._model.joints_display_size_live)
+        self._create_joints_on_curve_spn.setValue(self._model.joints_on_curve)
+        self._snap_joints_to_curve_spn.setValue(self._model.snap_joints_to_curve)
 
     def _setup_display_tools(self):
         display_widget = QWidget()
@@ -464,7 +443,31 @@ class JointWidgetController(object):
     def change_joints_display_size_live(self, flag):
         self._model.joints_display_size_live = flag
 
-    @tp.Dcc.undo_decorator()
+    def start_joint_tool(self):
+        return self._client.start_joint_tool()
+
+    def create_new_joint_on_center(self):
+        return self._client.create_new_joint_on_center()
+
+    def insert_joints(self):
+        joint_count = self._model.joints_to_insert
+        return self._client.insert_joints(num_joints=joint_count)
+
+    def create_joints_on_curve(self):
+        joints_on_curve = self._model.joints_on_curve
+        return self._client.create_joints_on_curve(num_joints=joints_on_curve)
+
+    def snap_joints_to_curve(self):
+        joints_to_snap = self._model.snap_joints_to_curve
+        return self._client.snap_joints_to_curve(num_joints=joints_to_snap)
+
+    def set_joint_display_size(self):
+        joints_display_size = self._model.joints_display_size
+        return tp.Dcc.set_joint_display_size(joints_display_size)
+
+    def select_hierarchy(self):
+        return tp.Dcc.select_hierarchy()
+
     def mirror_all_joints(self):
         """
         Mirror all scene joints
@@ -472,10 +475,7 @@ class JointWidgetController(object):
 
         return tp.Dcc.mirror_transform()
 
-    @staticmethod
-    @tp.Dcc.undo_decorator()
-    @tp.Dcc.repeat_last_decorator(__name__ + '.JointWidgetController')
-    def mirror_selected_joints():
+    def mirror_selected_joints(self):
         """
         Mirror selected joints
         """
@@ -487,10 +487,7 @@ class JointWidgetController(object):
 
         return tp.Dcc.mirror_transform(transforms=selected)
 
-    @staticmethod
-    @tp.Dcc.undo_decorator()
-    @tp.Dcc.repeat_last_decorator(__name__ + '.JointWidgetController')
-    def mirror_hierarchy_joints():
+    def mirror_hierarchy_joints(self):
         """
         Mirror selected joints and its hierarchy
         """
@@ -512,10 +509,7 @@ class JointWidgetController(object):
 
         return tp.Dcc.mirror_transform(transforms=all_xforms)
 
-    @staticmethod
-    @tp.Dcc.undo_decorator()
-    @tp.Dcc.repeat_last_decorator(__name__ + '.JointWidgetController')
-    def mirror_create_joints():
+    def mirror_create_joints(self):
         """
         Mirrors and create the selected joints
         """
@@ -531,10 +525,7 @@ class JointWidgetController(object):
                 'No transforms created. Check that are missing transforms on the right. '
                 'Check your selected transforms is on the left!')
 
-    @staticmethod
-    @tp.Dcc.undo_decorator()
-    @tp.Dcc.repeat_last_decorator(__name__ + '.JointWidgetController')
-    def mirror_create_all_joints():
+    def mirror_create_all_joints(self):
         """
         Mirrors and creates all joints
         """
@@ -565,20 +556,14 @@ class JointWidgetController(object):
         else:
             LOGGER.warning('No joints mirrored. Check there are joints on the left that can mirror right!')
 
-    @staticmethod
-    @tp.Dcc.repeat_last_decorator(__name__ + '.JointWidgetController')
-    @tp.Dcc.undo_decorator()
-    def orient_all_joints(force_orient_attributes=True):
+    def orient_all_joints(self, force_orient_attributes=True):
         """
         Orients all joints
         """
 
         return tp.Dcc.orient_joints(force_orient_attributes=force_orient_attributes)
 
-    @staticmethod
-    @tp.Dcc.undo_decorator()
-    @tp.Dcc.repeat_last_decorator(__name__ + '.JointWidgetController')
-    def orient_selected_joints(force_orient_attributes=True):
+    def orient_selected_joints(self, force_orient_attributes=True):
         """
         Orient selected joints
         :param force_orient_attributes: bool, Whether to force the orientation through OrientJointAttributes or not
@@ -611,14 +596,7 @@ class JointWidgetController(object):
         else:
             LOGGER.warning('No joints oriented. Check that there are joints with OrientAttributes!')
 
-    @staticmethod
-    @tp.Dcc.undo_decorator()
-    @tp.Dcc.repeat_last_decorator(__name__ + '.JointWidgetController')
-    def add_selected_orient_data():
-        if not tp.is_maya():
-            LOGGER.warning('Add Selected Orient data command is only available in Maya for now ...')
-            return False
-
+    def add_selected_orient_data(self):
         from tpDcc.dccs.maya.core import joint
 
         selected = tp.Dcc.selected_nodes_of_type('joint', full_path=False)
@@ -630,14 +608,7 @@ class JointWidgetController(object):
 
         return True
 
-    @staticmethod
-    @tp.Dcc.undo_decorator()
-    @tp.Dcc.repeat_last_decorator(__name__ + '.JointWidgetController')
-    def add_all_orient_data():
-        if not tp.is_maya():
-            LOGGER.warning('Add All Orient data command is only available in Maya for now ...')
-            return False
-
+    def add_all_orient_data(self):
         from tpDcc.dccs.maya.core import joint
 
         all_joints = tp.Dcc.list_nodes(node_type='joint', full_path=False)
@@ -672,14 +643,7 @@ class JointWidgetController(object):
         else:
             LOGGER.warning('No orient data added!')
 
-    @staticmethod
-    @tp.Dcc.undo_decorator()
-    @tp.Dcc.repeat_last_decorator(__name__ + '.JointWidgetController')
-    def remove_selected_orient_data():
-        if not tp.is_maya():
-            LOGGER.warning.emit('Remove Selected Orient data command is only available in Maya for now ...')
-            return False
-
+    def remove_selected_orient_data(self):
         from tpDcc.dccs.maya.core import joint
 
         selected = tp.Dcc.selected_nodes_of_type('joint', full_path=False)
@@ -691,14 +655,7 @@ class JointWidgetController(object):
 
         return True
 
-    @staticmethod
-    @tp.Dcc.undo_decorator()
-    @tp.Dcc.repeat_last_decorator(__name__ + '.JointWidgetController')
-    def remove_all_orient_data():
-        if not tp.is_maya():
-            LOGGER.warning('Remove All Orient data command is only available in Maya for now ...')
-            return False
-
+    def remove_all_orient_data(self):
         from tpDcc.dccs.maya.core import joint
 
         all_joints = tp.Dcc.list_nodes(node_type='joint', full_path=False)
@@ -733,10 +690,7 @@ class JointWidgetController(object):
         else:
             LOGGER.warning('No orient data removed. Check that there are joints with OrientAttributes!')
 
-    @staticmethod
-    @tp.Dcc.undo_decorator()
-    @tp.Dcc.repeat_last_decorator(__name__ + '.JointWidgetController')
-    def zero_selected_joint_orient():
+    def zero_selected_joint_orient(self):
         selected = tp.Dcc.selected_nodes_of_type('joint', full_path=False)
         if not selected:
             LOGGER.warning('Please select joints to zero out orient joint of')
@@ -744,9 +698,6 @@ class JointWidgetController(object):
 
         return tp.Dcc.zero_orient_joint(selected)
 
-    @staticmethod
-    @tp.Dcc.undo_decorator()
-    @tp.Dcc.repeat_last_decorator(__name__ + '.JointWidgetController')
     def zero_all_joint_orient(self):
         all_joints = tp.Dcc.list_nodes(node_type='joint', full_path=False)
         if not all_joints:
@@ -782,8 +733,6 @@ class JointWidgetController(object):
 
         return tp.Dcc.set_joint_local_rotation_axis_visibility(value)
 
-    @tp.Dcc.undo_decorator()
-    @tp.Dcc.repeat_last_decorator(__name__ + '.JointWidgetController')
     def toggle_selected_local_rotation_axis(self, value=None):
         """
         Toggles the visibility of selected joints local rotation axis
@@ -815,122 +764,11 @@ class JointWidgetController(object):
     def open_joint_orient_tool(self):
         tp.ToolsMgr().launch_tool_by_id('tpRigToolkit-tools-jointorient')
 
-    @staticmethod
-    @tp.Dcc.undo_decorator()
-    @tp.Dcc.repeat_last_decorator(__name__ + '.JointWidgetController')
-    def toggle_xray():
+    def toggle_xray(self):
         return tp.Dcc.toggle_xray()
 
-    @staticmethod
-    @tp.Dcc.undo_decorator()
-    @tp.Dcc.repeat_last_decorator(__name__ + '.JointWidgetController')
-    def toggle_selected_xray():
+    def toggle_selected_xray(self):
         return tp.Dcc.toggle_xray_on_selection()
 
-    @staticmethod
-    @tp.Dcc.undo_decorator()
-    @tp.Dcc.repeat_last_decorator(__name__ + '.JointWidgetController')
-    def toggle_xray_joints():
+    def toggle_xray_joints(self):
         return tp.Dcc.toggle_xray_joints()
-
-    def start_joint_tool(self):
-        return tp.Dcc.start_joint_tool()
-
-    @staticmethod
-    @tp.Dcc.undo_decorator()
-    @tp.Dcc.repeat_last_decorator(__name__ + '.JointWidgetController')
-    def create_new_joint_on_center():
-        if not tp.is_maya():
-            LOGGER.warning('Create Joint on Center is only available in Maya')
-            return False
-
-        from tpDcc.dccs.maya.core import joint
-
-        return joint.create_joint_on_center()
-
-    @staticmethod
-    @tp.Dcc.repeat_last_decorator(__name__ + '.JointWidgetController')
-    def create_new_joints_on_selected_components():
-        if not tp.is_maya():
-            LOGGER.warning('Create Joint on Center is only available in Maya')
-            return False
-
-        from tpDcc.dccs.maya.core import joint
-
-        return joint.create_joints_on_selected_components()
-
-    def insert_joints(self):
-        joint_count = self._model.joints_to_insert
-
-        return tp.Dcc.insert_joints(count=joint_count)
-
-    @tp.Dcc.undo_decorator()
-    def set_joint_display_size(self):
-        joints_display_size = self._model.joints_display_size
-        return tp.Dcc.set_joint_display_size(joints_display_size)
-
-    @staticmethod
-    @tp.Dcc.undo_decorator()
-    @tp.Dcc.repeat_last_decorator(__name__ + '.JointWidgetController')
-    def select_hierarchy():
-        return tp.Dcc.select_hierarchy()
-
-    def create_joints_on_curve(self):
-        if not tp.is_maya():
-            LOGGER.warning('Create Joints on Curve is only available in Maya')
-            return False
-
-        from tpDcc.dccs.maya.core import joint, curve
-
-        joints_on_curve = self._model.joints_on_curve
-
-        valid_curves = list()
-        selected = tp.Dcc.selected_nodes_of_type('transform', full_path=False)
-        if not selected:
-            LOGGER.warning('Please select at least one curve!')
-            return False
-
-        for obj in selected:
-            if not curve.is_a_curve(obj):
-                continue
-            valid_curves.append(obj)
-        if not valid_curves:
-            LOGGER.warning('Please select at least one curve!')
-            return False
-
-        for curve in valid_curves:
-            joint.create_oriented_joints_along_curve(curve, joints_on_curve, attach=False)
-
-        return True
-
-    def snap_joints_to_curve(self):
-        if not tp.is_maya():
-            LOGGER.warning('Snap Joints to Curve is only available in Maya')
-            return False
-
-        from tpDcc.dccs.maya.core import node, curve as curve_utils
-
-        joints_to_snap = self._model.snap_joints_to_curve
-
-        selected = tp.Dcc.selected_nodes_of_type('transform', full_path=False)
-        if not selected:
-            LOGGER.warning('Please select at least one curve!')
-            return False
-
-        joints = list()
-        curve = None
-        node_types = node.get_node_types(selected)
-        if 'joint' in node_types:
-            joints = node_types['joint']
-        if 'nurbsCurve' in node_types:
-            curves = node_types['nurbsCurve']
-            curve = curves[0]
-
-        if not joints:
-            LOGGER.warning('No joints selected!')
-            return False
-        if not curve:
-            LOGGER.warning('No NURBS curve selected!')
-            return False
-
-        return curve_utils.snap_joints_to_curve(joints, curve, joints_to_snap)

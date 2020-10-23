@@ -19,29 +19,34 @@ import tpDcc as tp
 LOGGER = tp.LogsMgr().get_logger('tpRigToolkit-tools-rigtoolbox')
 
 
-def get_toolbox_widgets(client, parent=None):
+def get_toolbox_widgets(client, commands_data, parent=None):
 
     all_widgets = list()
-    # try:
-    #     from tpRigToolkit.tools.rigtoolbox.dccs.maya.widgets import general
-    #     general_widget = general.GeneralWidget(client=client)
-    #     general_widget.setParent(parent)
-    #     all_widgets.append(general_widget)
-    # except Exception:
-    #     LOGGER.exception('Error while creating general widget: "{}"'.format(traceback.format_exc()))
-    #
-    # try:
-    #     from tpRigToolkit.tools.rigtoolbox.dccs.maya.widgets import joint
-    #     joint_widget = joint.JointWidget(client=client)
-    #     joint_widget.setParent(parent)
-    #     all_widgets.append(joint_widget)
-    # except Exception:
-    #     LOGGER.exception('Error while creating joint widget: "{}"'.format(traceback.format_exc()))
+    try:
+        from tpRigToolkit.tools.rigtoolbox.dccs.maya.widgets import general
+        general_commands_data = commands_data.get('general', dict())
+        if commands_data:
+            general_widget = general.GeneralWidget(commands_data=general_commands_data, client=client, parent=parent)
+            all_widgets.append(general_widget)
+        else:
+            LOGGER.warning('General widget not loaded because not commands data found!')
+    except Exception:
+        LOGGER.exception('Error while creating general widget: "{}"'.format(traceback.format_exc()))
+
+    try:
+        from tpRigToolkit.tools.rigtoolbox.dccs.maya.widgets import joint
+        joint_commmand_data = commands_data.get('joint', dict())
+        if joint_commmand_data:
+            joint_widget = joint.JointWidget(commands_data=joint_commmand_data, client=client, parent=parent)
+            all_widgets.append(joint_widget)
+    except Exception:
+        LOGGER.exception('Error while creating joint widget: "{}"'.format(traceback.format_exc()))
 
     try:
         from tpRigToolkit.tools.rigtoolbox.dccs.maya.widgets import skin
-        skinning_widget = skin.SkinningWidget(client=client)
-        skinning_widget.setParent(parent)
+        skin_commmand_data = commands_data.get('skin', dict())
+        skinning_widget = skin.SkinningWidget(commands_data=skin_commmand_data, client=client, parent=parent)
+        skinning_widget.refresh()
         all_widgets.append(skinning_widget)
     except Exception:
         LOGGER.exception('Error while creating skinning widget: "{}"'.format(traceback.format_exc()))

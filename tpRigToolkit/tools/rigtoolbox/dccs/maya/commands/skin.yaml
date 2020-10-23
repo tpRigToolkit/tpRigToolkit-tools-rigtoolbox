@@ -1,0 +1,146 @@
+smooth_bind_skin:
+  name: Apply Smooth Bind Skin
+  icon: smooth_skin
+  categories:
+    - Create
+
+rigid_bind_skin:
+  name: Apply Rigid Bind Skin
+  icon: rigid_skin
+  categories:
+    - Create
+
+detach_skin:
+  name: Detach Skin Cluster
+  icon: detach_skin
+  categories:
+    - Create
+  options:
+    detach_skin_options:
+      name: Detach Skin Options
+
+open_paint_skin_weights_tool:
+  name: Open Skin Weights Tool
+  icon: paint_skin_weights
+  categories:
+    - Create
+  options:
+    open_paint_skin_weights_tool_options:
+      name: Open Skin Weights Tool Options
+
+mirror_skin_weights:
+  name: Mirror Skin Weights
+  icon: mirror_skin_weights
+  categories:
+    - Create
+  widgets:
+    - _mirror_auto_assign_joints_labels_cbx
+
+copy_skin_weights:
+  name: Copy Skin Weights
+  icon: copy_skin_weights
+  categories:
+    - Create
+  widgets:
+    - _copy_skin_weights_auto_assign_joints_labels_cbx
+
+prune_skin_weights:
+  name: Prune Skin Weights
+  icon: prune_skin_weights
+  categories:
+    - Create
+
+transfer_skin_uvs:
+  name: Transfer Skin UVs
+  icon: transfer_skin_uvs
+  categories:
+    - Create
+  widgets:
+    - _transfer_skin_uvs_auto_assign_joints_labels_cbx
+
+clean_skinned_mesh:
+  name: Clean Skinned Mesh
+  icon: clean_skinned_mesh
+  categories:
+    - Create
+  widgets:
+    - _clean_skin_mesh_auto_assign_joints_labels_cbx
+
+combine_skinned_meshes:
+  name: Combine Skinned Meshes
+  icon: combine_skinned_meshes
+  categories:
+    - Create
+
+extract_skinned_faces:
+  name: Extract Skinned Faces
+  icon: extract_skinned_faces
+  categories:
+    - Create
+  widgets:
+    - _extract_skin_faces_auto_assign_joints_labels_cbx
+
+remove_unused_influences:
+  name: Remove Unused Influences
+  icon: remove_unused_influences
+  categories:
+    - Create
+
+restore_bind_pose:
+  name: Restore Bind Pose
+  icon: restore_bind_pose
+  categories:
+    - Create
+
+remove_bind_poses:
+  name: Remove Bind Poses
+  icon: remove_bind_poses
+  categories:
+    - Create
+
+weights_hammer:
+  name: Weights Hammer
+  icon: weights_hammer
+  categories:
+    - Create
+
+average_vertex_weights:
+  name: Average Weights
+  icon: null
+  categories:
+    - Setup
+  widgets:
+    - _distance_widget
+
+
+move_skin_weights:
+  name:  Move Skin Weights
+  icon: null
+  categories:
+    - Setup
+
+swap_skin_weights:
+  name: Swap Skin Weights
+  icon: null
+  categories:
+    - Setup
+
+select_influences:
+  name: Select Influences
+  icon: null
+  categories:
+    - Setup
+
+select_influence_components:
+  name: Select Influence Components
+  icon: null
+  categories:
+    - Setup
+
+delete_influences:
+  name: Delete Influences
+  icon: null
+  categories:
+    - Setup
+  widgets:
+    - _fast_delete_cbx

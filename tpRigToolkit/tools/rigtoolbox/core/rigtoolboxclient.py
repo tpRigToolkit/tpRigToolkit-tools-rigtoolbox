@@ -20,7 +20,359 @@ class RigToolboxClient(client.DccClient, object):
     PORT = 19344
 
     # =================================================================================================================
-    # MAYA
+    # MAYA - GENERAL
+    # =================================================================================================================
+
+    def delete_history(self, transforms=None):
+        cmd = {
+            'cmd': 'delete_history',
+            'transforms': transforms
+        }
+
+        reply_dict = self.send(cmd)
+
+        if not self.is_valid_reply(reply_dict):
+            return list()
+
+        return reply_dict['success']
+
+    def freeze_transforms(self, transforms=None):
+        cmd = {
+            'cmd': 'freeze_transforms',
+            'transforms': transforms
+        }
+
+        reply_dict = self.send(cmd)
+
+        if not self.is_valid_reply(reply_dict):
+            return list()
+
+        return reply_dict['success']
+
+    def move_pivot_to_zero(self, transforms=None):
+        cmd = {
+            'cmd': 'move_pivot_to_zero',
+            'transforms': transforms
+        }
+
+        reply_dict = self.send(cmd)
+
+        if not self.is_valid_reply(reply_dict):
+            return list()
+
+        return reply_dict['success']
+
+    def lock_all_transforms(self, transforms=None):
+        cmd = {
+            'cmd': 'lock_all_transforms',
+            'transforms': transforms
+        }
+
+        reply_dict = self.send(cmd)
+
+        if not self.is_valid_reply(reply_dict):
+            return list()
+
+        return reply_dict['success']
+
+    def lock_translation(self, transforms=None):
+        cmd = {
+            'cmd': 'lock_translation',
+            'transforms': transforms
+        }
+
+        reply_dict = self.send(cmd)
+
+        if not self.is_valid_reply(reply_dict):
+            return list()
+
+        return reply_dict['success']
+
+    def lock_rotation(self, transforms=None):
+        cmd = {
+            'cmd': 'lock_rotation',
+            'transforms': transforms
+        }
+
+        reply_dict = self.send(cmd)
+
+        if not self.is_valid_reply(reply_dict):
+            return list()
+
+        return reply_dict['success']
+
+    def lock_scale(self, transforms=None):
+        cmd = {
+            'cmd': 'lock_scale',
+            'transforms': transforms
+        }
+
+        reply_dict = self.send(cmd)
+
+        if not self.is_valid_reply(reply_dict):
+            return list()
+
+        return reply_dict['success']
+
+    def lock_visibility(self, transforms=None):
+        cmd = {
+            'cmd': 'lock_visibility',
+            'transforms': transforms
+        }
+
+        reply_dict = self.send(cmd)
+
+        if not self.is_valid_reply(reply_dict):
+            return list()
+
+        return reply_dict['success']
+
+    def unlock_all_transforms(self, transforms=None):
+        cmd = {
+            'cmd': 'unlock_all_transforms',
+            'transforms': transforms
+        }
+
+        reply_dict = self.send(cmd)
+
+        if not self.is_valid_reply(reply_dict):
+            return list()
+
+        return reply_dict['success']
+
+    def unlock_translation(self, transforms=None):
+        cmd = {
+            'cmd': 'unlock_translation',
+            'transforms': transforms
+        }
+
+        reply_dict = self.send(cmd)
+
+        if not self.is_valid_reply(reply_dict):
+            return list()
+
+        return reply_dict['success']
+
+    def unlock_rotation(self, transforms=None):
+        cmd = {
+            'cmd': 'unlock_rotation',
+            'transforms': transforms
+        }
+
+        reply_dict = self.send(cmd)
+
+        if not self.is_valid_reply(reply_dict):
+            return list()
+
+        return reply_dict['success']
+
+    def unlock_scale(self, transforms=None):
+        cmd = {
+            'cmd': 'unlock_scale',
+            'transforms': transforms
+        }
+
+        reply_dict = self.send(cmd)
+
+        if not self.is_valid_reply(reply_dict):
+            return list()
+
+        return reply_dict['success']
+
+    def unlock_visibility(self, transforms=None):
+        cmd = {
+            'cmd': 'unlock_visibility',
+            'transforms': transforms
+        }
+
+        reply_dict = self.send(cmd)
+
+        if not self.is_valid_reply(reply_dict):
+            return list()
+
+        return reply_dict['success']
+
+    def match_transform(self, source_transform=None, target_transform=None):
+        cmd = {
+            'cmd': 'match_transform',
+            'source_transform': source_transform,
+            'target_transform': target_transform
+        }
+
+        reply_dict = self.send(cmd)
+
+        if not self.is_valid_reply(reply_dict):
+            return list()
+
+        return reply_dict['success']
+
+    def match_translation(self, source_transform=None, target_transform=None):
+        cmd = {
+            'cmd': 'match_translation',
+            'source_transform': source_transform,
+            'target_transform': target_transform
+        }
+
+        reply_dict = self.send(cmd)
+
+        if not self.is_valid_reply(reply_dict):
+            return list()
+
+        return reply_dict['success']
+
+    def match_rotation(self, source_transform=None, target_transform=None):
+        cmd = {
+            'cmd': 'match_rotation',
+            'source_transform': source_transform,
+            'target_transform': target_transform
+        }
+
+        reply_dict = self.send(cmd)
+
+        if not self.is_valid_reply(reply_dict):
+            return list()
+
+        return reply_dict['success']
+
+    def match_scale(self, source_transform=None, target_transform=None):
+        cmd = {
+            'cmd': 'match_scale',
+            'source_transform': source_transform,
+            'target_transform': target_transform
+        }
+
+        reply_dict = self.send(cmd)
+
+        if not self.is_valid_reply(reply_dict):
+            return list()
+
+        return reply_dict['success']
+
+    def combine_meshes(self, meshes=None, new_mesh_name=None):
+        cmd = {
+            'cmd': 'combine_meshes',
+            'meshes': meshes,
+            'new_mesh_name': new_mesh_name
+        }
+
+        reply_dict = self.send(cmd)
+
+        if not self.is_valid_reply(reply_dict):
+            return list()
+
+        return reply_dict['success']
+
+    def mirror_mesh(self, meshes=None):
+        cmd = {
+            'cmd': 'mirror_mesh',
+            'meshes': meshes,
+        }
+
+        reply_dict = self.send(cmd)
+
+        if not self.is_valid_reply(reply_dict):
+            return list()
+
+        return reply_dict['success']
+
+    def open_symmetry_tool(self):
+        cmd = {
+            'cmd': 'open_symmetry_tool'
+        }
+
+        reply_dict = self.send(cmd)
+
+        if not self.is_valid_reply(reply_dict):
+            return list()
+
+        return reply_dict['success']
+
+    # =================================================================================================================
+    # MAYA - JOINTS
+    # =================================================================================================================
+
+    def start_joint_tool(self):
+        cmd = {
+            'cmd': 'start_joint_tool'
+        }
+
+        reply_dict = self.send(cmd)
+
+        if not self.is_valid_reply(reply_dict):
+            return list()
+
+        return reply_dict['success']
+
+    def create_new_joint_on_center(self, transforms=None):
+        cmd = {
+            'cmd': 'create_new_joint_on_center',
+            'transforms': transforms
+        }
+
+        reply_dict = self.send(cmd)
+
+        if not self.is_valid_reply(reply_dict):
+            return list()
+
+        return reply_dict['success']
+
+    def create_new_joints_on_selected_components(self):
+        cmd = {
+            'cmd': 'create_new_joints_on_selected_components'
+        }
+
+        reply_dict = self.send(cmd)
+
+        if not self.is_valid_reply(reply_dict):
+            return list()
+
+        return reply_dict['success']
+
+    def insert_joints(self, joints=None, num_joints=1):
+        cmd = {
+            'cmd': 'insert_joints',
+            'joints': joints,
+            'num_joints': num_joints
+        }
+
+        reply_dict = self.send(cmd)
+
+        if not self.is_valid_reply(reply_dict):
+            return list()
+
+        return reply_dict['success']
+
+    def create_joints_on_curve(self, curve=None, num_joints=1):
+        cmd = {
+            'cmd': 'create_joints_on_curve',
+            'curve': curve,
+            'num_joints': num_joints
+        }
+
+        reply_dict = self.send(cmd)
+
+        if not self.is_valid_reply(reply_dict):
+            return list()
+
+        return reply_dict['success']
+
+    def snap_joints_to_curve(self, joints=None, curve=None, num_joints=1):
+        cmd = {
+            'cmd': 'snap_joints_to_curve',
+            'joints': joints,
+            'curve': curve,
+            'num_joints': num_joints
+        }
+
+        reply_dict = self.send(cmd)
+
+        if not self.is_valid_reply(reply_dict):
+            return list()
+
+        return reply_dict['success']
+
+    # =================================================================================================================
+    # MAYA - SKINNING
     # =================================================================================================================
 
     def smooth_bind_skin(self, geo_node=None, show_options=False):
@@ -51,9 +403,10 @@ class RigToolboxClient(client.DccClient, object):
 
         return reply_dict['success']
 
-    def detach_bind_skin(self, show_options=False):
+    def detach_bind_skin(self, geo_node=None, show_options=False):
         cmd = {
             'cmd': 'detach_bind_skin',
+            'geo_node': geo_node,
             'show_options': show_options
         }
 

@@ -1,0 +1,36 @@
+start_joint_tool:
+  name: Joint Tool
+  icon: joint
+  categories:
+    - Create
+
+create_new_joint_on_center:
+  name: New Joint on Selection Center
+  icon: joint
+  categories:
+    - Create
+
+insert_joints:
+  name: Insert Joints
+  icon: joint
+  categories:
+    - Create
+  widgets:
+    - _joints_to_insert_widget
+
+create_joints_on_curve:
+  name: Create Joint Along Selected Curve
+  icon: joint
+  categories:
+    - Create
+  widgets:
+    - _create_joints_on_curve_widget
+
+
+snap_joints_to_curve:
+  name: Snap Joints to Selected Curve
+  icon: joint
+  categories:
+    - Create
+  widgets:
+    - _snap_joints_to_curve_widget
