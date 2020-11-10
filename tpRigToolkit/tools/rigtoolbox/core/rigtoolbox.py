@@ -13,21 +13,23 @@ __maintainer__ = "Tomas Poveda"
 __email__ = "tpovedatd@gmail.com"
 
 import os
+import logging
 import importlib
 
-from Qt.QtCore import *
-from Qt.QtWidgets import *
-from Qt.QtGui import *
+from Qt.QtCore import Qt
+from Qt.QtWidgets import QSizePolicy, QToolButton, QMainWindow
 
-import tpDcc as tp
+from tpDcc import dcc
 from tpDcc.core import tool
+from tpDcc.managers import resources
 from tpDcc.libs.python import yamlio
-from tpDcc.libs.qt.core import base, window, icon
-from tpDcc.libs.qt.widgets import toolset, progressbar, dock, message, buttons
+from tpDcc.libs.qt.core import base
+from tpDcc.libs.qt.widgets import window, toolset, progressbar, dock, message, buttons
 
-import tpRigToolkit
 from tpRigToolkit.tools.rigtoolbox.widgets import dock, base as base_widgets
 from tpRigToolkit.tools.rigtoolbox.widgets import library
+
+LOGGER = logging.getLogger('tpRigToolkit-tools-rigtoolbox')
 
 # Defines ID of the tool
 TOOL_ID = 'tpRigToolkit-tools-rigtoolbox'
@@ -75,8 +77,8 @@ class RigToolboxToolset(toolset.ToolsetWidget, object):
         self._client = rigtoolboxclient.RigToolboxClient()
         self._client.signals.dccDisconnected.connect(self._on_dcc_disconnected)
 
-        if not tp.is_standalone():
-            dcc_mod_name = '{}.dccs.{}.rigtoolboxserver'.format(TOOL_ID.replace('-', '.'), tp.Dcc.get_name())
+        if not dcc.is_standalone():
+            dcc_mod_name = '{}.dccs.{}.rigtoolboxserver'.format(TOOL_ID.replace('-', '.'), dcc.get_name())
             try:
                 mod = importlib.import_module(dcc_mod_name)
                 if hasattr(mod, 'RigToolboxServer'):
@@ -84,7 +86,7 @@ class RigToolboxToolset(toolset.ToolsetWidget, object):
                     self._client.set_server(server)
                     self._update_client()
             except Exception as exc:
-                tpRigToolkit.logger.warning(
+                LOGGER.warning(
                     'Impossible to launch RigToolbox server! Error while importing: {} >> {}'.format(dcc_mod_name, exc))
                 return
         else:
@@ -119,7 +121,7 @@ class RigToolboxToolset(toolset.ToolsetWidget, object):
                     try:
                         commands_data = yamlio.read_file(command_file_path, maintain_order=True)
                     except Exception as exc:
-                        tpRigToolkit.logger.error(
+                        LOGGER.error(
                             'Error while reading commands data from "{}" : {}'.format(command_file_path, exc))
                         continue
                     commands_datas[commands_category] = commands_data
@@ -131,16 +133,17 @@ class RigToolboxToolset(toolset.ToolsetWidget, object):
             from tpRigToolkit.tools.rigtoolbox.widgets import base
             toolbox_widget = base.BaseRigToolBoxWidget(
                 title='Hello World!', commands_data=None, controller=None, parent=self)
-            bug_icon = tp.ResourcesMgr().icon('bug')
-            palette_icon = tp.ResourcesMgr().icon('palette')
+            bug_icon = resources.icon('bug')
+            palette_icon = resources.icon('palette')
             print('Bug Icon', bug_icon)
             print('Palette Icon', palette_icon)
             toolbox_widget.main_layout.addWidget(buttons.BaseButton('Hello', icon=bug_icon, parent=self))
-            toolbox_widget.main_layout.addWidget(buttons.BaseButton('Hello2', icon=tp.ResourcesMgr().icon('download'), parent=self))
+            toolbox_widget.main_layout.addWidget(
+                buttons.BaseButton('Hello2', icon=resources.icon('download'), parent=self))
             toolbox_widget.main_layout.addWidget(buttons.BaseButton('Hello2', icon=palette_icon, parent=self))
             self._toolbox_widgets.append(toolbox_widget)
 
-        if dcc_name == tp.Dccs.Maya:
+        if dcc.is_maya():
             from tpRigToolkit.tools.rigtoolbox.dccs import maya
             self._toolbox_widgets = maya.get_toolbox_widgets(
                 client=self._client, commands_data=commands_datas, parent=self)
@@ -195,7 +198,7 @@ class RigToolboxWidget(base.BaseWidget, object):
                 info_button = QToolButton(parent=parent or self)
                 info_button.setCheckable(True)
                 info_button.setChecked(True)
-                info_button.setIcon(tp.ResourcesMgr().icon('info', theme='color'))
+                info_button.setIcon(resources.icon('info', theme='color'))
                 info_button.toggled.connect(w._on_toggle_info)
                 dock_widget.add_button(info_button)
             else:

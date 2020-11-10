@@ -15,7 +15,7 @@ __email__ = "tpovedatd@gmail.com"
 import os
 import traceback
 
-import tpDcc as tp
+from tpDcc import dcc
 from tpDcc.core import server
 from tpDcc.libs.python import path as path_utils
 from tpDcc.dccs.maya.core import helpers
@@ -565,11 +565,13 @@ class RigToolboxServer(server.DccServer, object):
             reply['success'] = False
 
     def average_vertex_weights(self, data, reply):
-        components = data['components'] or tp.Dcc.selected_nodes_in_order(flatten=True)
+        components = data['components'] or dcc.selected_nodes_in_order(flatten=True)
         use_distance = data['use_distance']
+        curve_weight_points = data['curve_weight_points']
 
         try:
-            result = skin.average_vertices_weights(components, use_distance=use_distance)
+            result = skin.average_vertices_weights(
+                components, use_distance=use_distance, curve_weight_points=curve_weight_points)
             reply.update(result)
         except Exception:
             if not reply['msg']:

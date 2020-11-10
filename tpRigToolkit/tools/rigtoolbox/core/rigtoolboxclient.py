@@ -625,11 +625,12 @@ class RigToolboxClient(client.DccClient, object):
 
         return reply_dict['success']
 
-    def average_vertex_weights(self, components=None, use_distance=True):
+    def average_vertex_weights(self, components=None, use_distance=True, curve_weight_points=None):
         cmd = {
             'cmd': 'average_vertex_weights',
             'components': components,
-            'use_distance': use_distance
+            'use_distance': use_distance,
+            'curve_weight_points': curve_weight_points
         }
 
         reply_dict = self.send(cmd)

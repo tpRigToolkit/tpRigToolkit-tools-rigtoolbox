@@ -7,7 +7,7 @@ Module that contains basic library implementation
 
 from __future__ import print_function, division, absolute_import
 
-from Qt.QtCore import *
+from Qt.QtCore import QObject, Signal
 
 
 class _CommandSignals(QObject, object):

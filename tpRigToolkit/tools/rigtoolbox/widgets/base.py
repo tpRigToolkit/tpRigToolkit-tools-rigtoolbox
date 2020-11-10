@@ -11,11 +11,11 @@ import time
 import inspect
 from functools import partial
 
-from Qt.QtCore import *
-from Qt.QtWidgets import *
-from Qt.QtGui import *
+from Qt.QtCore import Qt, Signal, QPoint, QSize, QEvent
+from Qt.QtWidgets import QSizePolicy, QWidget, QFrame, QMenu, QAction, QWhatsThis
+from Qt.QtGui import QCursor, QColor, QPainter, QBrush, QPolygon
 
-import tpDcc as tp
+from tpDcc.managers import resources
 from tpDcc.libs.python import python
 from tpDcc.libs.qt.core import base
 from tpDcc.libs.qt.widgets import layouts, label, buttons, accordion, balloon
@@ -194,7 +194,7 @@ class CommandRigToolBoxWidget(BaseRigToolBoxWidget, object):
         new_btn = CommandButton(parent=self).small()
         if icon:
             if python.is_string(icon):
-                icon = tp.ResourcesMgr().icon(icon)
+                icon = resources.icon(icon)
             new_btn.setIcon(icon)
         else:
             new_btn.setText(name)
@@ -249,7 +249,7 @@ class CommandRigToolBoxWidget(BaseRigToolBoxWidget, object):
                         continue
                     option_description = setting.get('description', '')
                     option_instructions = setting.get('instructions', '')
-                    option_icon = tp.ResourcesMgr().icon(setting.get('icon', 'tpRigToolkit'))
+                    option_icon = resources.icon(setting.get('icon', 'tpRigToolkit'))
                     option_action = QAction(option_icon, option_name, self)
                     option_action.setProperty('description', option_description or '')
                     option_action.setProperty('instructions', option_instructions or '')

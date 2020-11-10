@@ -12,11 +12,10 @@ __license__ = "MIT"
 __maintainer__ = "Tomas Poveda"
 __email__ = "tpovedatd@gmail.com"
 
+import logging
 import traceback
 
-import tpDcc as tp
-
-LOGGER = tp.LogsMgr().get_logger('tpRigToolkit-tools-rigtoolbox')
+LOGGER = logging.getLogger('tpRigToolkit-tools-rigtoolbox')
 
 
 def get_toolbox_widgets(client, commands_data, parent=None):

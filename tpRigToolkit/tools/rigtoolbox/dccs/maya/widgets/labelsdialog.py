@@ -7,14 +7,14 @@ Module that contains dialog to assign labels to joints
 
 from __future__ import print_function, division, absolute_import
 
-from Qt.QtCore import *
-from Qt.QtWidgets import *
+from Qt.QtCore import Qt, Signal, QObject
+from Qt.QtWidgets import QDialogButtonBox, QMessageBox
 
-from tpDcc.libs.qt.core import dialog, qtutils
-from tpDcc.libs.qt.widgets import layouts, label, lineedit, dividers, message
+from tpDcc.libs.qt.core import qtutils
+from tpDcc.libs.qt.widgets import layouts, dialog, label, lineedit, dividers, message
 
 
-class JointsLabelDialog(dialog.Dialog, object):
+class JointsLabelDialog(dialog.BaseDialog, object):
     def __init__(self, parent=None):
 
         self._model = JointsLabelModel()

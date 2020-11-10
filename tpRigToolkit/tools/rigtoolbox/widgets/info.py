@@ -7,10 +7,10 @@ Module that contains implementation for info command widget
 
 from __future__ import print_function, division, absolute_import
 
-from Qt.QtCore import *
-from Qt.QtWidgets import *
+from Qt.QtCore import Qt, Property
+from Qt.QtWidgets import QSizePolicy, QWidget, QFrame, QPlainTextEdit, QTextEdit
 
-import tpDcc as tp
+from tpDcc.managers import resources
 from tpDcc.libs.qt.core import base, mixin
 from tpDcc.libs.qt.widgets import layouts, message, expandables, dividers
 
@@ -71,7 +71,7 @@ class InfoMessage(base.BaseWidget, object):
 
         self.setMaximumHeight(150)
 
-        info_icon = tp.ResourcesMgr().icon('info')
+        info_icon = resources.icon('info')
         self._expandable_frame = expandables.ExpandableFrame(icon=info_icon, parent=self)
         self._expandable_frame.setFrameStyle(QFrame.StyledPanel | QFrame.Raised)
 

@@ -7,9 +7,11 @@ Module that contains library with general functions
 
 from __future__ import print_function, division, absolute_import
 
-import tpDcc as tp
+import maya.cmds
+
+from tpDcc import dcc
+from tpDcc.managers import tools
 from tpDcc.libs.python import python
-import tpDcc.dccs.maya as maya
 from tpDcc.dccs.maya.core import decorators, transform as xform_utils
 
 from tpRigToolkit.tools.rigtoolbox.widgets import library
@@ -24,7 +26,7 @@ def delete_history(transforms=None):
 
     out_dict = {'success': False, 'result': list()}
 
-    transforms = python.force_list(transforms or tp.Dcc.selected_nodes_of_type(node_type='transform') or list())
+    transforms = python.force_list(transforms or dcc.selected_nodes_of_type(node_type='transform') or list())
     if not transforms:
         out_dict['msg'] = 'No nodes to delete history of. Select at least one.'
         return out_dict
@@ -34,7 +36,7 @@ def delete_history(transforms=None):
     for i, node in enumerate(transforms):
         library.Command.progressCommand.emit(percentage * (i + 1), 'Deleting history: {}'.format(node))
         try:
-            tp.Dcc.delete_history(node)
+            dcc.delete_history(node)
             out_dict['result'].append(node)
         except Exception as exc:
             out_dict['msg'] = 'Was not possible to delete history in node: "{}" : {}'.format(node, exc)
@@ -54,7 +56,7 @@ def freeze_transforms(transforms=None):
 
     out_dict = {'success': False, 'result': list()}
 
-    transforms = python.force_list(transforms or tp.Dcc.selected_nodes_of_type(node_type='transform') or list())
+    transforms = python.force_list(transforms or dcc.selected_nodes_of_type(node_type='transform') or list())
     if not transforms:
         out_dict['msg'] = 'No transforms to freeze transforms of. Select at least one.'
         return out_dict
@@ -64,7 +66,7 @@ def freeze_transforms(transforms=None):
     for i, node in enumerate(transforms):
         library.Command.progressCommand.emit(percentage * (i + 1), 'Freezing transforms: {}'.format(node))
         try:
-            tp.Dcc.freeze_transforms(node)
+            dcc.freeze_transforms(node)
             out_dict['result'].append(node)
         except Exception as exc:
             out_dict['msg'] = 'Was not possible to freeze transforms in node: "{}" : {}'.format(node, exc)
@@ -84,7 +86,7 @@ def move_pivot_to_zero(transforms=None):
 
     out_dict = {'success': False, 'result': list()}
 
-    transforms = python.force_list(transforms or tp.Dcc.selected_nodes_of_type(node_type='transform') or list())
+    transforms = python.force_list(transforms or dcc.selected_nodes_of_type(node_type='transform') or list())
     if not transforms:
         out_dict['msg'] = 'No transforms to move pivot to zero of. Select at least one.'
         return out_dict
@@ -94,7 +96,7 @@ def move_pivot_to_zero(transforms=None):
     for i, node in enumerate(transforms):
         library.Command.progressCommand.emit(percentage * (i + 1), 'Moving pivot to zero: {}'.format(node))
         try:
-            tp.Dcc.move_pivot_to_zero(node)
+            dcc.move_pivot_to_zero(node)
             out_dict['result'].append(node)
         except Exception as exc:
             out_dict['msg'] = 'Was not possible move pivot to zero for node: "{}" : {}'.format(node, exc)
@@ -114,7 +116,7 @@ def lock_all_transforms(transforms=None):
 
     out_dict = {'success': False, 'result': list()}
 
-    transforms = python.force_list(transforms or tp.Dcc.selected_nodes_of_type(node_type='transform') or list())
+    transforms = python.force_list(transforms or dcc.selected_nodes_of_type(node_type='transform') or list())
     if not transforms:
         out_dict['msg'] = 'No transforms to lock all transform channels of. Select at least one.'
         return out_dict
@@ -124,9 +126,9 @@ def lock_all_transforms(transforms=None):
     for i, node in enumerate(transforms):
         library.Command.progressCommand.emit(percentage * (i + 1), 'Locking all transforms: {}'.format(node))
         try:
-            tp.Dcc.lock_translate_attributes(node)
-            tp.Dcc.lock_rotate_attributes(node)
-            tp.Dcc.lock_scale_attributes(node)
+            dcc.lock_translate_attributes(node)
+            dcc.lock_rotate_attributes(node)
+            dcc.lock_scale_attributes(node)
             out_dict['result'].append(node)
         except Exception as exc:
             out_dict['msg'] = 'Was not possible to lock all transforms for node: "{}" : {}'.format(node, exc)
@@ -146,7 +148,7 @@ def lock_translation(transforms=None):
 
     out_dict = {'success': False, 'result': list()}
 
-    transforms = python.force_list(transforms or tp.Dcc.selected_nodes_of_type(node_type='transform') or list())
+    transforms = python.force_list(transforms or dcc.selected_nodes_of_type(node_type='transform') or list())
     if not transforms:
         out_dict['msg'] = 'No transforms to lock all translation channels of. Select at least one.'
         return out_dict
@@ -156,7 +158,7 @@ def lock_translation(transforms=None):
     for i, node in enumerate(transforms):
         library.Command.progressCommand.emit(percentage * (i + 1), 'Locking translation channels: {}'.format(node))
         try:
-            tp.Dcc.lock_translate_attributes(node)
+            dcc.lock_translate_attributes(node)
             out_dict['result'].append(node)
         except Exception as exc:
             out_dict['msg'] = 'Was not possible to lock translate channels in node: "{}" : {}'.format(node, exc)
@@ -176,7 +178,7 @@ def lock_rotation(transforms=None):
 
     out_dict = {'success': False, 'result': list()}
 
-    transforms = python.force_list(transforms or tp.Dcc.selected_nodes_of_type(node_type='transform') or list())
+    transforms = python.force_list(transforms or dcc.selected_nodes_of_type(node_type='transform') or list())
     if not transforms:
         out_dict['msg'] = 'No transforms to lock all rotation channels of. Select at least one.'
         return out_dict
@@ -186,7 +188,7 @@ def lock_rotation(transforms=None):
     for i, node in enumerate(transforms):
         library.Command.progressCommand.emit(percentage * (i + 1), 'Locking rotation channels: {}'.format(node))
         try:
-            tp.Dcc.lock_rotate_attributes(node)
+            dcc.lock_rotate_attributes(node)
             out_dict['result'].append(node)
         except Exception as exc:
             out_dict['msg'] = 'Was not possible to lock rotations channel in node: "{}" : {}'.format(node, exc)
@@ -206,7 +208,7 @@ def lock_scale(transforms=None):
 
     out_dict = {'success': False, 'result': list()}
 
-    transforms = python.force_list(transforms or tp.Dcc.selected_nodes_of_type(node_type='transform') or list())
+    transforms = python.force_list(transforms or dcc.selected_nodes_of_type(node_type='transform') or list())
     if not transforms:
         out_dict['msg'] = 'No transforms to lock all scale channels of. Select at least one.'
         return out_dict
@@ -216,7 +218,7 @@ def lock_scale(transforms=None):
     for i, node in enumerate(transforms):
         library.Command.progressCommand.emit(percentage * (i + 1), 'Locking scale channels: {}'.format(node))
         try:
-            tp.Dcc.lock_scale_attributes(node)
+            dcc.lock_scale_attributes(node)
             out_dict['result'].append(node)
         except Exception as exc:
             out_dict['msg'] = 'Was not possible to lock scale channels in node: "{}" : {}'.format(node, exc)
@@ -236,7 +238,7 @@ def lock_visibility(transforms=None):
 
     out_dict = {'success': False, 'result': list()}
 
-    transforms = python.force_list(transforms or tp.Dcc.selected_nodes_of_type(node_type='transform') or list())
+    transforms = python.force_list(transforms or dcc.selected_nodes_of_type(node_type='transform') or list())
     if not transforms:
         out_dict['msg'] = 'No transforms to lock all scale channels of. Select at least one.'
         return out_dict
@@ -246,7 +248,7 @@ def lock_visibility(transforms=None):
     for i, node in enumerate(transforms):
         library.Command.progressCommand.emit(percentage * (i + 1), 'Locking visibility channel: {}'.format(node))
         try:
-            tp.Dcc.lock_visibility_attribute(node)
+            dcc.lock_visibility_attribute(node)
             out_dict['result'].append(node)
         except Exception as exc:
             out_dict['msg'] = 'Was not possible to lock visibility channel in node: "{}" : {}'.format(node, exc)
@@ -266,7 +268,7 @@ def unlock_all_transforms(transforms=None):
 
     out_dict = {'success': False, 'result': list()}
 
-    transforms = python.force_list(transforms or tp.Dcc.selected_nodes_of_type(node_type='transform') or list())
+    transforms = python.force_list(transforms or dcc.selected_nodes_of_type(node_type='transform') or list())
     if not transforms:
         out_dict['msg'] = 'No transforms to unlock all transform channels of. Select at least one.'
         return out_dict
@@ -276,9 +278,9 @@ def unlock_all_transforms(transforms=None):
     for i, node in enumerate(transforms):
         library.Command.progressCommand.emit(percentage * (i + 1), 'Unlocking all transforms: {}'.format(node))
         try:
-            tp.Dcc.unlock_translate_attributes(node)
-            tp.Dcc.unlock_rotate_attributes(node)
-            tp.Dcc.unlock_scale_attributes(node)
+            dcc.unlock_translate_attributes(node)
+            dcc.unlock_rotate_attributes(node)
+            dcc.unlock_scale_attributes(node)
             out_dict['result'].append(node)
         except Exception as exc:
             out_dict['msg'] = 'Was not possible to unlock all transforms for node: "{}" : {}'.format(node, exc)
@@ -298,7 +300,7 @@ def unlock_translation(transforms=None):
 
     out_dict = {'success': False, 'result': list()}
 
-    transforms = python.force_list(transforms or tp.Dcc.selected_nodes_of_type(node_type='transform') or list())
+    transforms = python.force_list(transforms or dcc.selected_nodes_of_type(node_type='transform') or list())
     if not transforms:
         out_dict['msg'] = 'No transforms to unlock all translation channels of. Select at least one.'
         return out_dict
@@ -308,7 +310,7 @@ def unlock_translation(transforms=None):
     for i, node in enumerate(transforms):
         library.Command.progressCommand.emit(percentage * (i + 1), 'Unlocking translation channels: {}'.format(node))
         try:
-            tp.Dcc.unlock_translate_attributes(node)
+            dcc.unlock_translate_attributes(node)
             out_dict['result'].append(node)
         except Exception as exc:
             out_dict['msg'] = 'Was not possible to unlock translate channels in node: "{}" : {}'.format(node, exc)
@@ -328,7 +330,7 @@ def unlock_rotation(transforms=None):
 
     out_dict = {'success': False, 'result': list()}
 
-    transforms = python.force_list(transforms or tp.Dcc.selected_nodes_of_type(node_type='transform') or list())
+    transforms = python.force_list(transforms or dcc.selected_nodes_of_type(node_type='transform') or list())
     if not transforms:
         out_dict['msg'] = 'No transforms to unlock all rotation channels of. Select at least one.'
         return out_dict
@@ -338,7 +340,7 @@ def unlock_rotation(transforms=None):
     for i, node in enumerate(transforms):
         library.Command.progressCommand.emit(percentage * (i + 1), 'Unlocking rotation channels: {}'.format(node))
         try:
-            tp.Dcc.unlock_rotate_attributes(node)
+            dcc.unlock_rotate_attributes(node)
             out_dict['result'].append(node)
         except Exception as exc:
             out_dict['msg'] = 'Was not possible to unlock rotations channel in node: "{}" : {}'.format(node, exc)
@@ -358,7 +360,7 @@ def unlock_scale(transforms=None):
 
     out_dict = {'success': False, 'result': list()}
 
-    transforms = python.force_list(transforms or tp.Dcc.selected_nodes_of_type(node_type='transform') or list())
+    transforms = python.force_list(transforms or dcc.selected_nodes_of_type(node_type='transform') or list())
     if not transforms:
         out_dict['msg'] = 'No transforms to unlock all scale channels of. Select at least one.'
         return out_dict
@@ -368,7 +370,7 @@ def unlock_scale(transforms=None):
     for i, node in enumerate(transforms):
         library.Command.progressCommand.emit(percentage * (i + 1), 'Unlocking scale channels: {}'.format(node))
         try:
-            tp.Dcc.unlock_scale_attributes(node)
+            dcc.unlock_scale_attributes(node)
             out_dict['result'].append(node)
         except Exception as exc:
             out_dict['msg'] = 'Was not possible to unlock scale channels in node: "{}" : {}'.format(node, exc)
@@ -388,7 +390,7 @@ def unlock_visibility(transforms=None):
 
     out_dict = {'success': False, 'result': list()}
 
-    transforms = python.force_list(transforms or tp.Dcc.selected_nodes_of_type(node_type='transform') or list())
+    transforms = python.force_list(transforms or dcc.selected_nodes_of_type(node_type='transform') or list())
     if not transforms:
         out_dict['msg'] = 'No transforms to unlock all scale channels of. Select at least one.'
         return out_dict
@@ -398,7 +400,7 @@ def unlock_visibility(transforms=None):
     for i, node in enumerate(transforms):
         library.Command.progressCommand.emit(percentage * (i + 1), 'Unlocking scale channels: {}'.format(node))
         try:
-            tp.Dcc.unlock_visibility_attribute(node)
+            dcc.unlock_visibility_attribute(node)
             out_dict['result'].append(node)
         except Exception as exc:
             out_dict['msg'] = 'Was not possible to unlock visibility channel in node: "{}" : {}'.format(node, exc)
@@ -418,7 +420,7 @@ def match_transform(source_transform=None, target_transform=None):
 
     out_dict = {'success': False, 'result': list()}
 
-    selection = tp.Dcc.selected_nodes_of_type(node_type='transform')
+    selection = dcc.selected_nodes_of_type(node_type='transform')
     source_transform = source_transform or selection[0] if python.index_exists_in_list(selection, 0) else None
     if not source_transform:
         out_dict['msg'] = 'No source transform given to match against target transform.'
@@ -439,14 +441,14 @@ def match_transform(source_transform=None, target_transform=None):
             maya.cmds.delete(maya.cmds.scaleConstraint(target_transform, source, maintainOffset=False))
 
             # For joints, we store now rotation data in jointOrient attribute
-            if tp.Dcc.node_type(source) == 'joint':
+            if dcc.node_type(source) == 'joint':
                 for axis in 'XYZ':
                     joint_orient_attr = 'jointOrient{}'.format(axis)
                     joint_rotation_attr = 'rotate{}'.format(axis)
-                    tp.Dcc.set_attribute_value(source, joint_orient_attr, 0.0)
-                    joint_rotation = tp.Dcc.get_attribute_value(source, joint_rotation_attr)
-                    tp.Dcc.set_attribute_value(source, joint_orient_attr, joint_rotation)
-                    tp.Dcc.set_attribute_value(source, joint_rotation_attr, 0.0)
+                    dcc.set_attribute_value(source, joint_orient_attr, 0.0)
+                    joint_rotation = dcc.get_attribute_value(source, joint_rotation_attr)
+                    dcc.set_attribute_value(source, joint_orient_attr, joint_rotation)
+                    dcc.set_attribute_value(source, joint_rotation_attr, 0.0)
 
             out_dict['result'].append(source)
         except Exception as exc:
@@ -456,7 +458,7 @@ def match_transform(source_transform=None, target_transform=None):
 
     matched_nodes = out_dict.get('result', None)
     if matched_nodes:
-        tp.Dcc.select_node(matched_nodes)
+        dcc.select_node(matched_nodes)
 
     out_dict['success'] = True
 
@@ -472,7 +474,7 @@ def match_translation(source_transform=None, target_transform=None):
 
     out_dict = {'success': False, 'result': list()}
 
-    selection = tp.Dcc.selected_nodes_of_type(node_type='transform')
+    selection = dcc.selected_nodes_of_type(node_type='transform')
     source_transform = source_transform or selection[0] if python.index_exists_in_list(selection, 0) else None
     if not source_transform:
         out_dict['msg'] = 'No source transform given to match against target translation.'
@@ -498,7 +500,7 @@ def match_translation(source_transform=None, target_transform=None):
 
     matched_nodes = out_dict.get('result', None)
     if matched_nodes:
-        tp.Dcc.select_node(matched_nodes)
+        dcc.select_node(matched_nodes)
 
     out_dict['success'] = True
 
@@ -514,7 +516,7 @@ def match_rotation(source_transform=None, target_transform=None):
 
     out_dict = {'success': False, 'result': list()}
 
-    selection = tp.Dcc.selected_nodes_of_type(node_type='transform')
+    selection = dcc.selected_nodes_of_type(node_type='transform')
     source_transform = source_transform or selection[0] if python.index_exists_in_list(selection, 0) else None
     if not source_transform:
         out_dict['msg'] = 'No source transform given to match against target rotation.'
@@ -534,14 +536,14 @@ def match_rotation(source_transform=None, target_transform=None):
             maya.cmds.delete(maya.cmds.orientConstraint(target_transform, source, maintainOffset=False))
 
             # For joints, we store now rotation data in jointOrient attribute
-            if tp.Dcc.node_type(source) == 'joint':
+            if dcc.node_type(source) == 'joint':
                 for axis in 'XYZ':
                     joint_orient_attr = 'jointOrient{}'.format(axis)
                     joint_rotation_attr = 'rotate{}'.format(axis)
-                    tp.Dcc.set_attribute_value(source, joint_orient_attr, 0.0)
-                    joint_rotation = tp.Dcc.get_attribute_value(source, joint_rotation_attr)
-                    tp.Dcc.set_attribute_value(source, joint_orient_attr, joint_rotation)
-                    tp.Dcc.set_attribute_value(source, joint_rotation_attr, 0.0)
+                    dcc.set_attribute_value(source, joint_orient_attr, 0.0)
+                    joint_rotation = dcc.get_attribute_value(source, joint_rotation_attr)
+                    dcc.set_attribute_value(source, joint_orient_attr, joint_rotation)
+                    dcc.set_attribute_value(source, joint_rotation_attr, 0.0)
 
             out_dict['result'].append(source)
         except Exception as exc:
@@ -551,7 +553,7 @@ def match_rotation(source_transform=None, target_transform=None):
 
     matched_nodes = out_dict.get('result', None)
     if matched_nodes:
-        tp.Dcc.select_node(matched_nodes)
+        dcc.select_node(matched_nodes)
 
     out_dict['success'] = True
 
@@ -567,7 +569,7 @@ def match_scale(source_transform=None, target_transform=None):
 
     out_dict = {'success': False, 'result': list()}
 
-    selection = tp.Dcc.selected_nodes_of_type(node_type='transform')
+    selection = dcc.selected_nodes_of_type(node_type='transform')
     source_transform = source_transform or selection[0] if python.index_exists_in_list(selection, 0) else None
     if not source_transform:
         out_dict['msg'] = 'No source transform given to match against target scale.'
@@ -593,7 +595,7 @@ def match_scale(source_transform=None, target_transform=None):
 
     matched_nodes = out_dict.get('result', None)
     if matched_nodes:
-        tp.Dcc.select_node(matched_nodes)
+        dcc.select_node(matched_nodes)
 
     out_dict['success'] = True
 
@@ -609,7 +611,7 @@ def combine_meshes(meshes=None, new_mesh_name=None):
 
     out_dict = {'success': False, 'result': None}
 
-    meshes = meshes or tp.Dcc.selected_nodes_of_type(node_type='transform')
+    meshes = meshes or dcc.selected_nodes_of_type(node_type='transform')
     meshes = python.force_list(meshes)
     if not meshes:
         out_dict['msg'] = 'No meshes to combine selected.'
@@ -617,21 +619,21 @@ def combine_meshes(meshes=None, new_mesh_name=None):
     if len(meshes) < 2:
         out_dict['msg'] = 'You need to select at least two meshes to combine.'
         return out_dict
-    new_mesh_name = new_mesh_name or tp.Dcc.node_short_name(meshes[0])
+    new_mesh_name = new_mesh_name or dcc.node_short_name(meshes[0])
 
     parent_node = None
-    node_parents = list(set([tp.Dcc.node_parent(mesh) for mesh in meshes]))
+    node_parents = list(set([dcc.node_parent(mesh) for mesh in meshes]))
     if all(parent == node_parents[0] for parent in node_parents):
         parent_node = node_parents[0]
 
     try:
-        combined_mesh = tp.Dcc.combine_meshes(construction_history=False)
+        combined_mesh = dcc.combine_meshes(construction_history=False)
         if not combined_mesh:
             out_dict['msg'] = 'Combine operation was done but not combined mesh was generated'
             return out_dict
-        combined_mesh = tp.Dcc.rename_node(combined_mesh, new_mesh_name)
+        combined_mesh = dcc.rename_node(combined_mesh, new_mesh_name)
         if parent_node:
-            tp.Dcc.set_parent(combined_mesh, parent_node)
+            dcc.set_parent(combined_mesh, parent_node)
 
         out_dict['result'] = combined_mesh
     except Exception as exc:
@@ -652,7 +654,7 @@ def mirror_mesh(mesh=None):
 
     out_dict = {'success': False, 'result': list()}
 
-    meshes = mesh or tp.Dcc.selected_nodes_of_type(node_type='transform')
+    meshes = mesh or dcc.selected_nodes_of_type(node_type='transform')
     meshes = python.force_list(meshes)
     if not meshes:
         out_dict['msg'] = 'No meshes to mirror selected.'
@@ -660,7 +662,7 @@ def mirror_mesh(mesh=None):
 
     for mesh in meshes:
         try:
-            parent_node = tp.Dcc.node_parent(mesh)
+            parent_node = dcc.node_parent(mesh)
             mirror_geo_name = xform_utils.find_transform_right_side(mesh, check_if_exists=False)
             mirror_geo = maya.cmds.duplicate(mesh, n=mirror_geo_name or None)
             root = maya.cmds.group(empty=True, world=True)
@@ -672,7 +674,7 @@ def mirror_mesh(mesh=None):
             maya.cmds.delete(root)
             maya.cmds.makeIdentity(mirror_geo, apply=True, t=False, r=True, s=True, n=False, pn=True)
             if parent_node:
-                tp.Dcc.set_parent(mirror_geo, parent_node)
+                dcc.set_parent(mirror_geo, parent_node)
             out_dict['result'].append(mirror_geo)
         except Exception as exc:
             out_dict['msg'] = 'Was not possible to mirror meshes "{}" : '.format(meshes, exc)
@@ -688,7 +690,7 @@ def open_symmetry_tool():
     out_dict = {'success': False, 'result': None}
 
     try:
-        tool = tp.ToolsMgr().launch_tool_by_id('tpRigToolkit-tools-symmesh')
+        tool = tools.ToolsManager().launch_tool_by_id('tpRigToolkit-tools-symmesh')
         out_dict['result'] = tool
     except Exception as exc:
         out_dict['msg'] = 'Was not to open symmetry tool : {} '.format(exc)

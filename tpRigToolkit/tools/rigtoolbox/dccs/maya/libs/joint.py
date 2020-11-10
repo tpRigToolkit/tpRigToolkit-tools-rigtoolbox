@@ -7,10 +7,11 @@ Module that contains library with joint functions
 
 from __future__ import print_function, division, absolute_import
 
+import maya.cmds
+
+from tpDcc import dcc
 from tpDcc.libs.python import python
 
-import tpDcc as tp
-import tpDcc.dccs.maya as maya
 from tpDcc.dccs.maya.core import decorators, joint as joint_utils, curve as curve_utils
 
 
@@ -24,7 +25,7 @@ def start_joint_tool():
     out_dict = {'success': False, 'result': list()}
 
     try:
-        tp.Dcc.start_joint_tool()
+        dcc.start_joint_tool()
     except Exception as exc:
         out_dict['msg'] = 'Was not possible to open joint tool: {}'.format(exc)
         return out_dict
@@ -95,7 +96,7 @@ def insert_joints(joints=None, num_joints=1):
 
     out_dict = {'success': False, 'result': None}
 
-    joints = joints or tp.Dcc.selected_nodes_of_type(node_type='joint')
+    joints = joints or dcc.selected_nodes_of_type(node_type='joint')
     joints = python.force_list(joints)
     if not joints:
         out_dict['msg'] = 'No joints to insert joints into found.'
@@ -121,7 +122,7 @@ def create_joints_on_curve(curve=None, num_joints=1):
     out_dict = {'success': False, 'result': list()}
 
     valid_curves = list()
-    curves = curve or tp.Dcc.selected_nodes_of_type(node_type='transform')
+    curves = curve or dcc.selected_nodes_of_type(node_type='transform')
     curves = python.force_list(curves)
     for curve in curves:
         if not curve_utils.is_a_curve(curve):
@@ -151,10 +152,10 @@ def snap_joints_to_curve(joints=None, curve=None, num_joints=1):
     out_dict = {'success': False, 'result': dict()}
 
     valid_joints = list()
-    joints = joints or tp.Dcc.selected_nodes_of_type(node_type='joint')
+    joints = joints or dcc.selected_nodes_of_type(node_type='joint')
     joints = python.force_list(joints)
     for joint in joints:
-        if not tp.Dcc.object_type(joint) == 'joint':
+        if not dcc.object_type(joint) == 'joint':
             continue
         valid_joints.append(joint)
     if not valid_joints:
@@ -162,7 +163,7 @@ def snap_joints_to_curve(joints=None, curve=None, num_joints=1):
         return out_dict
 
     valid_curves = list()
-    curves = curve or tp.Dcc.selected_nodes_of_type(node_type='transform')
+    curves = curve or dcc.selected_nodes_of_type(node_type='transform')
     curves = python.force_list(curves)
     for curve in curves:
         if not curve_utils.is_a_curve(curve):
@@ -187,10 +188,10 @@ def check_joint_labels(joints=None):
     out_dict = {'success': False, 'result': False}
 
     valid_joints = list()
-    joints = joints or tp.Dcc.selected_nodes_of_type(node_type='joint')
+    joints = joints or dcc.selected_nodes_of_type(node_type='joint')
     joints = python.force_list(joints)
     for joint in joints:
-        if not tp.Dcc.object_type(joint) == 'joint':
+        if not dcc.object_type(joint) == 'joint':
             continue
         valid_joints.append(joint)
     if not valid_joints:

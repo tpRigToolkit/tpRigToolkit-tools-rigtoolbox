@@ -1,9 +1,10 @@
 from __future__ import print_function, division, absolute_import
 
-from Qt.QtCore import *
-from Qt.QtWidgets import *
+from Qt.QtCore import Qt, Signal, QSize, QEvent
+from Qt.QtWidgets import QWidget, QDockWidget, QLabel, QLineEdit, QToolButton, QGroupBox
 
-import tpDcc as tp
+from tpDcc.managers import resources
+from tpDcc.libs.qt.widgets import layouts
 
 
 class DockWidget(QDockWidget, object):
@@ -34,16 +35,12 @@ class DockTitleBar(QWidget, object):
 
         self._renamable = renamable
 
-        main_layout = QHBoxLayout()
-        main_layout.setSpacing(1)
-        main_layout.setContentsMargins(0, 0, 0, 1)
+        main_layout = layouts.HorizontalLayout(spacing=1, margins=(0, 0, 0, 1))
         self.setLayout(main_layout)
 
         self._buttons_box = QGroupBox('')
         self._buttons_box.setObjectName('Docked')
-        self._buttons_layout = QHBoxLayout()
-        self._buttons_layout.setSpacing(0)
-        self._buttons_layout.setContentsMargins(0, 0, 0, 0)
+        self._buttons_layout = layouts.HorizontalLayout(spacing=0, margins=(0, 0, 0, 0))
         self._buttons_layout.setSpacing(1)
         self._buttons_layout.setMargin(2)
         self._buttons_box.setLayout(self._buttons_layout)
@@ -57,11 +54,11 @@ class DockTitleBar(QWidget, object):
         self._button_size = QSize(15, 15)
 
         self._dock_btn = QToolButton(self)
-        self._dock_btn.setIcon(tp.ResourcesMgr().icon('restore_window', theme='color'))
+        self._dock_btn.setIcon(resources.icon('restore_window', theme='color'))
         self._dock_btn.setMaximumSize(self._button_size)
         self._dock_btn.setAutoRaise(True)
         self._close_btn = QToolButton(self)
-        self._close_btn.setIcon(tp.ResourcesMgr().icon('close_window', theme='color'))
+        self._close_btn.setIcon(resources.icon('close_window', theme='color'))
         self._close_btn.setMaximumSize(self._button_size)
         self._close_btn.setAutoRaise(True)
 

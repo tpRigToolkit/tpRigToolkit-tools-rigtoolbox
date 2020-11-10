@@ -7,14 +7,15 @@ Module that contains widget with geometry functionality
 
 from __future__ import print_function, division, absolute_import
 
-from Qt.QtCore import *
+import logging
 
-import tpDcc as tp
+from Qt.QtCore import QObject
+
 from tpDcc.libs.qt.core import qtutils
 
 from tpRigToolkit.tools.rigtoolbox.widgets import base
 
-LOGGER = tp.LogsMgr().get_logger('tpRigToolkit-tools-rigtoolbox')
+LOGGER = logging.getLogger('tpRigToolkit-tools-rigtoolbox')
 
 
 class GeneralWidget(base.CommandRigToolBoxWidget, object):

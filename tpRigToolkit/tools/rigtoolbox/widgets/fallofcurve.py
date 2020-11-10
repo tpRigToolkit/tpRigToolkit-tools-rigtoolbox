@@ -5,18 +5,22 @@
 Module that contains fallof curve widget implementation
 """
 
-from Qt.QtCore import *
-from Qt.QtWidgets import *
-from Qt.QtGui import *
+from Qt.QtCore import Qt, Signal, QObject, QPoint, QPointF, QRect, QRectF, QLineF
+from Qt.QtWidgets import QApplication, QMenuBar, QUndoStack, QUndoCommand, QGraphicsView
+from Qt.QtWidgets import QGraphicsItem, QGraphicsPathItem, QGraphicsScene, QGraphicsLineItem, QGraphicsRectItem
+from Qt.QtGui import QColor, QPainterPath, QPainter, QPen, QBrush, QRadialGradient, QKeySequence, QKeyEvent
 
+from tpDcc.libs.python import bezier
 from tpDcc.libs.qt.core import base, mixin
 from tpDcc.libs.qt.widgets import layouts, dividers, combobox, checkbox
 
 
 @mixin.theme_mixin
 class FallofCurveWidget(base.BaseWidget, object):
-    def __init__(self, parent=None):
 
+    curveUpdated = Signal(list)
+
+    def __init__(self, parent=None):
         self._base_size = 300
         self._bezier_dict = {
             'bezier': [
@@ -63,6 +67,7 @@ class FallofCurveWidget(base.BaseWidget, object):
     def setup_signals(self):
         self._bezier_type_combo.currentTextChanged.connect(self._on_change_curve)
         self._snap_cbx.toggled.connect(self._on_change_snap)
+        self._scene.curveUpdated.connect(self._on_curve_updated)
 
     def resizeEvent(self, event):
         super(FallofCurveWidget, self).resizeEvent(event)
@@ -78,15 +83,49 @@ class FallofCurveWidget(base.BaseWidget, object):
             self._bezier_type_combo.addItem(key)
         self._scene.undo_stack.clear()
 
+    def curve_as_points(self):
+        points = self._scene.bezier_curve.points
+        points_list = list()
+        for point in points:
+            points_list.append([point.x(), point.y()])
+
+        return points_list
+
+    def get_division_data(self, divisions=11):
+        percentage = 1 / (divisions - 1.0)
+        divisions_list = list()
+        for i in range(divisions):
+            divisions_list.append(i * percentage)
+
+        return self.get_data_on_points(divisions_list)
+
+    def get_data_on_percentage(self, percentage, points_list=None):
+        points_list = points_list or self.curve_as_points()
+        return bezier.get_data_on_percentage(percentage, points_list)
+
+    def get_data_on_points(self, in_list=None):
+        in_list = in_list or [0.0, 0.2, 0.25, 0.5, 0.6, 0.66, 0.8, 1.0]
+        percentage_list = list()
+        for point in in_list:
+            percentage_list.append(self.get_data_on_percentage(point))
+
+        return percentage_list
+
     def _on_change_curve(self, text):
         curve_points = self._bezier_dict[text]
         self._scene.undo_stack.push(CurveNodeSwitchUndoCommand(self._scene, self._scene.get_points(), curve_points))
+        curve_points = self.curve_as_points()
+        self.curveUpdated.emit(curve_points)
 
     def _on_change_snap(self, flag):
         if not flag:
             self._scene.set_snap(False)
         else:
             self._scene.set_snap(250)
+
+    def _on_curve_updated(self):
+        curve_points = self.curve_as_points()
+        self.curveUpdated.emit(curve_points)
 
 
 @mixin.theme_mixin
@@ -101,6 +140,10 @@ class BezierCurveItem(QGraphicsPathItem, object):
         # self._theme = None
 
         self.setZValue(-1)
+
+    @property
+    def points(self):
+        return tuple(self._points)
 
     def boundingRect(self):
         return QRectF(self._bounding_rect or self._rect)
@@ -119,13 +162,20 @@ class BezierCurveItem(QGraphicsPathItem, object):
         self.setPath(bezier_path)
 
 
+class CurveNodeItemSignals(QObject):
+
+    curveUpdated = Signal()
+
+
 @mixin.theme_mixin
 class CurveNodeItem(QGraphicsItem, object):
 
+    curveUpdated = Signal()
     WIDTH = 10
 
     def __init__(self, rect=None, parent=None):
 
+        self.signals = CurveNodeItemSignals()
         gradient = QRadialGradient(
             self.WIDTH * 0.75, self.WIDTH * 0.75, self.WIDTH * 0.75, self.WIDTH * 0.75, self.WIDTH * 0.75)
         gradient.setColorAt(0, self.theme().accent_color_6 if self.theme() else QColor.fromRgbF(1, 0.5, 0.01, 1))
@@ -195,6 +245,7 @@ class CurveNodeItem(QGraphicsItem, object):
         self._new_pos = QPointF(scale_x, scale_y)
         self.setPos(self._new_pos)
         self.scene().update_curve()
+        self.signals.curveUpdated.emit()
 
     def mouseReleaseEvent(self, event):
         super(CurveNodeItem, self).mouseReleaseEvent(event)
@@ -234,6 +285,9 @@ class CurveNodeItem(QGraphicsItem, object):
 
 
 class CurveNodeScene(QGraphicsScene):
+
+    curveUpdated = Signal()
+
     def __init__(self, base_rect):
         super(CurveNodeScene, self).__init__()
 
@@ -349,6 +403,7 @@ class CurveNodeScene(QGraphicsScene):
             control_point.setPos(point - QPoint(5, 5))
             self._control_points.append(control_point)
             self._point_objects.append(control_point)
+            control_point.signals.curveUpdated.connect(self.curveUpdated.emit)
 
         self._control_points[0].lock_x_pos = -5.0
         self._control_points[-1].lock_x_pos = (self._base_size - 5.0)
