@@ -7,17 +7,19 @@ Module that contains widget for rig skinning functionality
 
 from __future__ import print_function, division, absolute_import
 
-from Qt.QtCore import *
-from Qt.QtWidgets import *
+import logging
 
-import tpDcc as tp
+from Qt.QtCore import Signal, QObject
+from Qt.QtWidgets import QWidget, QMessageBox
+
+from tpDcc.managers import resources
 from tpDcc.libs.qt.core import qtutils
 from tpDcc.libs.qt.widgets import layouts, checkbox
 
 from tpRigToolkit.tools.rigtoolbox.widgets import base, fallofcurve
 from tpRigToolkit.tools.rigtoolbox.dccs.maya.widgets import labelsdialog
 
-LOGGER = tp.LogsMgr().get_logger('tpRigToolkit-tools-rigtoolbox')
+LOGGER = logging.getLogger('tpRigToolkit-tools-rigtoolbox')
 
 
 class SkinningWidget(base.CommandRigToolBoxWidget, object):
@@ -45,8 +47,8 @@ class SkinningWidget(base.CommandRigToolBoxWidget, object):
         self._average_falloff_widget = QWidget()
         average_falloff_layout = layouts.VerticalLayout(spacing=2, margins=(5, 5, 5, 5))
         self._average_falloff_widget.setLayout(average_falloff_layout)
-        self._average_fallof_curve = fallofcurve.FallofCurveWidget(parent=self)
-        average_falloff_layout.addWidget(self._average_fallof_curve)
+        self._average_falloff_curve = fallofcurve.FallofCurveWidget(parent=self)
+        average_falloff_layout.addWidget(self._average_falloff_curve)
 
         self._mirror_auto_assign_joints_labels_cbx = checkbox.BaseCheckBox('Auto Assign Labels', self)
         self._copy_skin_weights_auto_assign_joints_labels_cbx = checkbox.BaseCheckBox('Auto Assign Labels', self)
@@ -58,9 +60,9 @@ class SkinningWidget(base.CommandRigToolBoxWidget, object):
         distance_layout = layouts.VerticalLayout(spacing=2, margins=(5, 5, 5, 5))
         self._distance_widget.setLayout(distance_layout)
         self._distance_average_cbx = checkbox.BaseCheckBox('On Distance', self)
-        self._average_fallof_curve = fallofcurve.FallofCurveWidget(parent=self)
+        self._average_falloff_curve = fallofcurve.FallofCurveWidget(parent=self)
         distance_layout.addWidget(self._distance_average_cbx)
-        distance_layout.addWidget(self._average_fallof_curve)
+        distance_layout.addWidget(self._average_falloff_curve)
         self._fast_delete_cbx = checkbox.BaseCheckBox('Fast Delete', self)
 
         self._average_falloff_widget.setVisible(False)
@@ -93,6 +95,7 @@ class SkinningWidget(base.CommandRigToolBoxWidget, object):
             self._controller.set_extract_skin_faces_auto_assign_labels)
         self._distance_average_cbx.toggled.connect(self._controller.set_distance_average)
         self._fast_delete_cbx.toggled.connect(self._controller.set_fast_delete)
+        self._average_falloff_curve.curveUpdated.connect(self._controller.set_average_weights_curve_points)
 
         self._model.mirrorAutoAssignLabelsChanged.connect(self._mirror_auto_assign_joints_labels_cbx.setChecked)
         self._model.copySkinWeightsAutoAssignLabelsChanged.connect(
@@ -109,7 +112,7 @@ class SkinningWidget(base.CommandRigToolBoxWidget, object):
     def _on_show_context_menu(self):
         super(SkinningWidget, self)._on_show_context_menu()
 
-        self._average_fallof_curve.update_view()
+        self._average_falloff_curve.update_view()
 
     def refresh(self):
 
@@ -124,6 +127,9 @@ class SkinningWidget(base.CommandRigToolBoxWidget, object):
             self._model.extract_skin_faces_auto_assign_labels)
         self._distance_average_cbx.setChecked(self._model.use_distance_average)
         self._fast_delete_cbx.setChecked(self._model.fast_delete)
+
+        # NOTE: We do this to force model, to have point list value on startup
+        self._controller.set_average_weights_curve_points(self._average_falloff_curve.curve_as_points())
 
 
 class SkinningWidgetModel(QObject, object):
@@ -146,6 +152,7 @@ class SkinningWidgetModel(QObject, object):
         self._extract_skin_faces_auto_assign_labels = True
         self._use_distance_average = True
         self._fast_delete = True
+        self._average_weights_curve_points = list()
 
     @property
     def mirror_auto_assign_labels(self):
@@ -210,6 +217,14 @@ class SkinningWidgetModel(QObject, object):
         self._fast_delete = bool(flag)
         self.fastDeleteChanged.emit(self._fast_delete)
 
+    @property
+    def average_weights_curve_points(self):
+        return self._average_weights_curve_points
+
+    @average_weights_curve_points.setter
+    def average_weights_curve_points(self, widget):
+        self._average_weights_curve_points = widget
+
 
 class SkinningWidgetController(object):
 
@@ -247,6 +262,9 @@ class SkinningWidgetController(object):
 
     def set_fast_delete(self, flag):
         self._model.fast_delete = flag
+
+    def set_average_weights_curve_points(self, points_list):
+        self._model.average_weights_curve_points = points_list
 
     def smooth_bind_skin(self):
         return self._client.smooth_bind_skin(show_options=True)
@@ -332,8 +350,10 @@ class SkinningWidgetController(object):
 
     def average_vertex_weights(self):
         use_distance_average = self._model.use_distance_average
+        curve_weight_points = self._model.average_weights_curve_points
 
-        return self._client.average_vertex_weights(use_distance=use_distance_average)
+        return self._client.average_vertex_weights(
+            use_distance=use_distance_average, curve_weight_points=curve_weight_points)
 
     def move_skin_weights(self):
         return self._client.move_skin_weights()

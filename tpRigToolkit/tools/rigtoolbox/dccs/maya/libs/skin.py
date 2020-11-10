@@ -7,18 +7,22 @@ Module that contains library with skinning related functions
 
 from __future__ import print_function, division, absolute_import
 
-import traceback
+import logging
 import cStringIO
+import traceback
 
+import maya.cmds
 
-from tpDcc.libs.python import python, kdtree
+from tpDcc import dcc
+from tpDcc.libs.python import python, kdtree, bezier
 
-import tpDcc as tp
-import tpDcc.dccs.maya as maya
 from tpDcc.dccs.maya.api import skin as api_skin, mathlib as api_mathlib
-from tpDcc.dccs.maya.core import decorators, skin as skin_utils, mesh as mesh_utils, joint as joint_utils
+from tpDcc.dccs.maya.core import decorators, geometry as geo_utils, mesh as mesh_utils, joint as joint_utils
+from tpDcc.dccs.maya.core import skin as skin_utils
 
 from tpRigToolkit.tools.rigtoolbox.widgets import library
+
+LOGGER = logging.getLogger('tpRigToolkit-tools-rigtoolbox')
 
 
 @decorators.undo
@@ -30,7 +34,7 @@ def apply_smooth_bind_skin(geo=None, show_options=False):
 
     out_dict = {'success': False, 'result': None}
 
-    geo_nodes = geo or tp.Dcc.selected_nodes_of_type(node_type='transform')
+    geo_nodes = geo or dcc.selected_nodes_of_type(node_type='transform')
     geo_nodes = python.force_list(geo_nodes)
     valid_geo_nodes = list()
     for geo_node in geo_nodes:
@@ -59,7 +63,7 @@ def apply_rigid_skin(geo=None, show_options=False):
 
     out_dict = {'success': False, 'result': None}
 
-    geo_nodes = geo or tp.Dcc.selected_nodes_of_type(node_type='transform')
+    geo_nodes = geo or dcc.selected_nodes_of_type(node_type='transform')
     geo_nodes = python.force_list(geo_nodes)
     valid_geo_nodes = list()
     for geo_node in geo_nodes:
@@ -88,7 +92,7 @@ def detach_bind_skin(geo=None, show_options=False):
 
     out_dict = {'success': False, 'result': list()}
 
-    geo_nodes = geo or tp.Dcc.selected_nodes_of_type(node_type='transform')
+    geo_nodes = geo or dcc.selected_nodes_of_type(node_type='transform')
     geo_nodes = python.force_list(geo_nodes)
     valid_geo_nodes = list()
     for geo_node in geo_nodes:
@@ -135,7 +139,7 @@ def mirror_skin_weights(mesh=None, show_options=False, **kwargs):
 
     out_dict = {'success': False, 'result': None}
 
-    transforms = mesh or tp.Dcc.selected_nodes_of_type('transform')
+    transforms = mesh or dcc.selected_nodes_of_type('transform')
     transforms = python.force_list(transforms)
     if not transforms:
         out_dict['msg'] = 'No meshes to mirror skin weights of found.'
@@ -159,7 +163,7 @@ def copy_skin_weights(source_mesh=None, target_mesh=None, show_options=False, **
 
     out_dict = {'success': False, 'result': None}
 
-    selection = tp.Dcc.selected_nodes_of_type('transform')
+    selection = dcc.selected_nodes_of_type('transform')
     source_transform = source_mesh or (selection[0] if python.index_exists_in_list(selection, 1) else None)
     target_transform = target_mesh or (selection[1] if python.index_exists_in_list(selection, 1) else None)
     if not source_transform or not target_transform:
@@ -185,7 +189,7 @@ def prune_skin_weights(mesh=None, show_options=False, **kwargs):
 
     out_dict = {'success': False, 'result': None}
 
-    transforms = mesh or tp.Dcc.selected_nodes_of_type('transform')
+    transforms = mesh or dcc.selected_nodes_of_type('transform')
     transforms = python.force_list(transforms)
     if not transforms:
         out_dict['msg'] = 'No meshes to prune skin weights of found.'
@@ -209,7 +213,7 @@ def transfer_uvs_to_skinned_geometry(source_mesh=None, target_mesh=None, use_int
 
     out_dict = {'success': False, 'result': None}
 
-    selection = tp.Dcc.selected_nodes_of_type('transform')
+    selection = dcc.selected_nodes_of_type('transform')
     source_transform = source_mesh or (selection[0] if python.index_exists_in_list(selection, 0) else None)
     target_transform = target_mesh or (selection[1] if python.index_exists_in_list(selection, 1) else None)
     if not source_transform or not target_transform:
@@ -235,7 +239,7 @@ def freeze_skinned_mesh(skinned_mesh, **kwargs):
 
     out_dict = {'success': False, 'result': list()}
 
-    meshes = skinned_mesh or tp.Dcc.selected_nodes_of_type('transform')
+    meshes = skinned_mesh or dcc.selected_nodes_of_type('transform')
     meshes = python.force_list(meshes)
     if not meshes:
         return False
@@ -267,7 +271,7 @@ def freeze_skinned_mesh(skinned_mesh, **kwargs):
             out_dict['msg'] = 'Was not possible to freeze skinned meshes: "{}" | {}'.format(meshes, exc)
             return out_dict
 
-    tp.Dcc.select_node(meshes)
+    dcc.select_node(meshes)
 
     out_dict['success'] = True
 
@@ -280,7 +284,7 @@ def combine_skinned_meshes(meshes=None):
 
     out_dict = {'success': False, 'result': None}
 
-    meshes = meshes or tp.Dcc.selected_nodes_of_type('transform')
+    meshes = meshes or dcc.selected_nodes_of_type('transform')
     if not meshes:
         out_dict['msg'] = 'No meshes to combine found.'
         return out_dict
@@ -303,7 +307,7 @@ def extract_skinned_selected_components(selected_components=None, **kwargs):
 
     out_dict = {'success': False, 'result': None}
 
-    components = selected_components or tp.Dcc.selected_nodes(flatten=True)
+    components = selected_components or dcc.selected_nodes(flatten=True)
     components = python.force_list(components)
     if not components:
         out_dict['msg'] = 'No components to extract from found.'
@@ -327,7 +331,7 @@ def delete_unused_influences(skinned_objects=None):
 
     out_dict = {'success': False, 'result': list()}
 
-    skinned_objects = skinned_objects or tp.Dcc.selected_nodes()
+    skinned_objects = skinned_objects or dcc.selected_nodes()
     skinned_objects = python.force_list(skinned_objects)
     if not skinned_objects:
         out_dict['msg'] = 'No components to extract from found.'
@@ -342,7 +346,7 @@ def delete_unused_influences(skinned_objects=None):
             if not skin_cluster_name:
                 shape = maya.cmds.listRelatives(mesh, shapes=True) or None
                 if shape:
-                    maya.logger.warning(
+                    LOGGER.warning(
                         'Impossible to delete unused influences because mesh "{}" '
                         'has no skin cluster attached to it!'.format(mesh))
                 continue
@@ -372,11 +376,11 @@ def restore_to_bind_pose(skinned_mesh=None):
 
     out_dict = {'success': False, 'result': None}
 
-    skinned_meshes = skinned_mesh or tp.Dcc.selected_nodes_of_type('transform')
+    skinned_meshes = skinned_mesh or dcc.selected_nodes_of_type('transform')
     skinned_meshes = python.force_list(skinned_meshes)
     if not skinned_meshes:
         skinned_meshes = list()
-        meshes = tp.Dcc.list_nodes(node_type='mesh')
+        meshes = dcc.list_nodes(node_type='mesh')
         for mesh in meshes:
             skinned_meshes.append(maya.cmds.listRelatives(mesh, parent=True)[0])
     if not skinned_meshes:
@@ -430,11 +434,12 @@ def hammer_vertices(vertices_to_hammer=None, return_as_list=True):
 
 
 @decorators.undo
-def average_vertices_weights(selection, use_distance):
+def average_vertices_weights(selection, use_distance, curve_weight_points=None):
     """
     Generates an average weight from all selected vertices to apply to the last selected vertex
     :param selection: list<Vertex>, list of vertices to average
     :param use_distance:
+    :param curve_weight_points:
     :return:
     """
 
@@ -456,10 +461,6 @@ def average_vertices_weights(selection, use_distance):
     skin_cluster_name = skin_utils.find_related_skin_cluster(obj)
     maya.cmds.setAttr('{0}.envelope'.format(skin_cluster_name), 0)
 
-    # TODO: Support for multiple geometry types
-    poly = True
-    added = 0.0
-
     try:
         maya.cmds.skinCluster(obj, edit=True, normalizeWeights=True)
         if total_vertices == 2 or is_edge_selection:
@@ -472,50 +473,92 @@ def average_vertices_weights(selection, use_distance):
             for i, vert_list in enumerate(base_list):
                 library.Command.progressCommand.emit(
                     percentage * (i + 1), 'Pass 1: Averaging vertex weights: {}'.format(i))
+
                 start = vert_list[0]
                 end = vert_list[-1]
-                order = mesh_utils.find_shortest_vertices_path_between_vertices(vert_list)
-                if order:
-                    order = order[:-1]      # we are not interested in the last vertex
+                surface = start.split('.')[0]
+                obj_type = maya.cmds.objectType(surface)
+
+                poly = False
+                if obj_type == 'mesh':
+                    poly = True
+                    order = mesh_utils.find_shortest_vertices_path_between_vertices(vert_list)
+                    added = 0.0
                     amount = len(order) + 1
                     total_distance = api_mathlib.distance_between_nodes(order[-1], end)
-                    list_bone_influences = maya.cmds.skinCluster(obj, query=True, inf=True)
-                    weights_start = maya.cmds.skinPercent(skin_cluster_name, start, query=True, v=True)
-                    weights_end = maya.cmds.skinPercent(skin_cluster_name, end, query=True, v=True)
-
-                    lengths = list()
-                    if use_distance:
-                        for j, vertex in enumerate(order):
-                            if j == 0:
-                                length = api_mathlib.distance_between_nodes(start, vertex)
-                            else:
-                                length = api_mathlib.distance_between_nodes(order[j - 1], vertex)
-                            if poly:
-                                total_distance += length
-                            lengths.append(length)
-
-            percentage = float(1.0) / (amount + added)
-            current_length = 0.0
-
-            for i, vertex in enumerate(order):
-                library.Command.progressCommand.emit(
-                    percentage * (i + 1), 'Pass 2: Averaging vertex weights: {}'.format(i))
-                if use_distance:
-                    current_length += lengths[i]
-                    current_percentage = (current_length / total_distance)
+                elif obj_type == 'nurbsSurface':
+                    order, total_distance = geo_utils.find_shortest_path_between_surface_cvs(
+                        vert_list, return_total_distance=True)
+                    added = -2.0
+                    amount = len(order) + 1
+                elif obj_type == 'lattice':
+                    order, total_distance = geo_utils.find_shortest_path_between_lattice_cvs(
+                        vert_list, return_total_distance=True)
+                    added = -2.0
+                    amount = len(order) + 1
                 else:
-                    current_percentage = i * percentage
-                    if poly:
-                        current_percentage = (i + 1) * percentage
+                    numbers = [int(start.split("[")[-1].split("]")[0]), int(end.split("[")[-1].split("]")[0])]
+                    range_list = range(min(numbers), max(numbers) + 1)
+                    amount = len(range_list)
+                    added = -1.0
+                    order = list()
+                    total_distance = 0.0
+                    for j, num in enumerate(range_list):
+                        cv = '{}.cv[{}]'.format(surface, num)
+                        order.append(cv)
+                        if j == 0:
+                            continue
+                        total_distance += api_mathlib.distance_between_nodes(order[j - 1], cv)
+                if not order:
+                    return
 
-                new_weight_list = list()
-                for j, weight in enumerate(weights_start):
-                    value1 = weights_end[j] * current_percentage
-                    value2 = weights_end[j] * (1 - current_percentage)
-                    new_weight_list.append((list_bone_influences[j], value1 + value2))
+                list_bone_influences = maya.cmds.skinCluster(obj, query=True, inf=True)
+                weights_start = maya.cmds.skinPercent(skin_cluster_name, start, query=True, v=True)
+                weights_end = maya.cmds.skinPercent(skin_cluster_name, end, query=True, v=True)
 
-                maya.cmds.skinPercent(skin_cluster_name, vertex, transformValue=new_weight_list)
+                lengths = list()
+                if use_distance:
+                    for j, vertex in enumerate(order):
+                        if j == 0:
+                            length = api_mathlib.distance_between_nodes(start, vertex)
+                        else:
+                            length = api_mathlib.distance_between_nodes(order[j - 1], vertex)
+                        if poly:
+                            total_distance += length
+                        lengths.append(length)
 
+                percentage = float(1.0) / (amount + added)
+                current_length = 0.0
+
+                for index, vertex in enumerate(order):
+                    library.Command.progressCommand.emit(
+                        percentage * (index + 1), 'Pass 2: Averaging vertex weights: {}'.format(index))
+                    if use_distance:
+                        current_length += lengths[index]
+                        current_percentage = (current_length / total_distance)
+                    else:
+                        current_percentage = index * percentage
+                        if poly:
+                            current_percentage = (index + 1) * percentage
+                    if curve_weight_points:
+                        current_percentage = bezier.get_data_on_percentage(current_percentage, curve_weight_points)
+
+                    new_weight_list = list()
+                    for j, weight in enumerate(weights_start):
+                        value1 = weights_end[j] * current_percentage
+                        value2 = weights_start[j] * (1 - current_percentage)
+                        new_weight_list.append((list_bone_influences[j], value1 + value2))
+
+                    maya.cmds.skinPercent(skin_cluster_name, vertex, transformValue=new_weight_list)
+
+                maya.cmds.select([start, end], r=True)
+
+                maya.cmds.setAttr('{}.envelope'.format(skin_cluster_name), 1)
+                maya.cmds.select(vert_list, replace=True)
+                maya.cmds.refresh()
+                library.Command.progressCommand.emit(
+                    percentage * i, 'Pass 3: Updating skin cluster for vertex: {}'.format(i))
+                maya.cmds.setAttr('{}.envelope'.format(skin_cluster_name), 0)
         else:
             last_selected = selection[-1]
             point_list = [x for x in selection if x != last_selected]
@@ -569,8 +612,12 @@ def average_vertices_weights(selection, use_distance):
             eval(cmd.getvalue())
     except Exception:
         out_dict['msg'] = 'Was not possible to average vertex weights: {}'.format(traceback.format_exc())
+        maya.cmds.setAttr('{}.envelope'.format(skin_cluster_name), 1)
+        return out_dict
     finally:
-        maya.cmds.setAttr('{0}.envelope'.format(skin_cluster_name), 1)
+        maya.cmds.setAttr('{}.envelope'.format(skin_cluster_name), 1)
+
+    out_dict['success'] = True
 
     return out_dict
 
@@ -581,7 +628,7 @@ def move_skin_weights(source_joint=None, target_joint=None, mesh=None):
 
     out_dict = {'success': False, 'result': None}
 
-    selection = tp.Dcc.selected_nodes()
+    selection = dcc.selected_nodes()
     source_joint = source_joint or (selection[0] if python.index_exists_in_list(selection, 0) else None)
     if not source_joint:
         out_dict['msg'] = 'No source joint found to move skin weights from.'
@@ -615,7 +662,7 @@ def swap_skin_weights(source_joint=None, target_joint=None, mesh=None):
 
     out_dict = {'success': False, 'result': None}
 
-    selection = tp.Dcc.selected_nodes()
+    selection = dcc.selected_nodes()
     source_joint = source_joint or (selection[0] if python.index_exists_in_list(selection, 0) else None)
     if not source_joint:
         out_dict['msg'] = 'No source joint found to swap skin weights from.'
@@ -649,7 +696,7 @@ def select_influencing_joints(mesh_node=None):
 
     out_dict = {'success': False, 'result': None}
 
-    mesh_nodes = mesh_node or tp.Dcc.selected_nodes_of_type(node_type='transform')
+    mesh_nodes = mesh_node or dcc.selected_nodes_of_type(node_type='transform')
     mesh_nodes = python.force_list(mesh_nodes)
     mesh_node = mesh_nodes[0] if mesh_nodes else None
     if not mesh_node:
@@ -719,8 +766,8 @@ def unbind_influences_quick(skinned_objects=None, influences_to_unbind=None, del
     :return: bool
     """
 
-    selected_transforms = tp.Dcc.selected_nodes_of_type('transform')
-    selected_joints = tp.Dcc.selected_nodes_of_type('joint')
+    selected_transforms = dcc.selected_nodes_of_type('transform')
+    selected_joints = dcc.selected_nodes_of_type('joint')
     influences_to_unbind = influences_to_unbind or selected_joints
     if not skinned_objects:
         skinned_objects = [xform for xform in selected_transforms if xform not in selected_joints]
@@ -728,7 +775,7 @@ def unbind_influences_quick(skinned_objects=None, influences_to_unbind=None, del
         return False
     skinned_objects = python.force_list(skinned_objects)
     influences_to_unbind = python.force_list(influences_to_unbind)
-    influences_to_unbind_short = [tp.Dcc.node_short_name(joint_node) for joint_node in influences_to_unbind]
+    influences_to_unbind_short = [dcc.node_short_name(joint_node) for joint_node in influences_to_unbind]
 
     skin_clusters = list()
     skin_percentage = 100.0 / len(skinned_objects)
@@ -792,8 +839,8 @@ def unbind_influences(skinned_objects=None, influences_to_unbind=None, delete=Fa
     :return: bool
     """
 
-    selected_transforms = tp.Dcc.selected_nodes_of_type('transform')
-    selected_joints = tp.Dcc.selected_nodes_of_type('joint')
+    selected_transforms = dcc.selected_nodes_of_type('transform')
+    selected_joints = dcc.selected_nodes_of_type('joint')
     influences_to_unbind = influences_to_unbind or selected_joints
     if not skinned_objects:
         skinned_objects = [xform for xform in selected_transforms if xform not in selected_joints]
@@ -801,7 +848,7 @@ def unbind_influences(skinned_objects=None, influences_to_unbind=None, delete=Fa
         return False
     skinned_objects = python.force_list(skinned_objects)
     influences_to_unbind = python.force_list(influences_to_unbind)
-    influences_to_unbind_short = [tp.Dcc.node_short_name(joint_node) for joint_node in influences_to_unbind]
+    influences_to_unbind_short = [dcc.node_short_name(joint_node) for joint_node in influences_to_unbind]
 
     skin_clusters = list()
     skin_percentage = 100.0 / len(skinned_objects)

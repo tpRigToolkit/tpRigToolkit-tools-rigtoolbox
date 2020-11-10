@@ -106,7 +106,7 @@ weights_hammer:
 
 average_vertex_weights:
   name: Average Weights
-  icon: null
+  icon: average_skin_weights
   categories:
     - Setup
   widgets:
@@ -115,31 +115,31 @@ average_vertex_weights:
 
 move_skin_weights:
   name:  Move Skin Weights
-  icon: null
+  icon: move_joint_skin
   categories:
     - Setup
 
 swap_skin_weights:
   name: Swap Skin Weights
-  icon: null
+  icon: swap_joint_skin
   categories:
     - Setup
 
 select_influences:
   name: Select Influences
-  icon: null
+  icon: select_skin_influence
   categories:
     - Setup
 
 select_influence_components:
   name: Select Influence Components
-  icon: null
+  icon: select_skin_influence_components
   categories:
     - Setup
 
 delete_influences:
   name: Delete Influences
-  icon: null
+  icon: delete_influence
   categories:
     - Setup
   widgets:

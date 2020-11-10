@@ -1,3 +1,12 @@
+#! /usr/bin/env python
+# -*- coding: utf-8 -*-
+
+"""
+Module that contains Average Vertex Weights Maya plugin implementation
+"""
+
+from __future__ import print_function, division, absolute_import
+
 import sys
 
 from maya.api import OpenMaya as OpenMaya
