@@ -11,11 +11,12 @@ from Qt.QtCore import Qt, Property
 from Qt.QtWidgets import QSizePolicy, QWidget, QFrame, QPlainTextEdit, QTextEdit
 
 from tpDcc.managers import resources
-from tpDcc.libs.qt.core import base, mixin
+from tpDcc.libs.resources.core import theme
+from tpDcc.libs.qt.core import base
 from tpDcc.libs.qt.widgets import layouts, message, expandables, dividers
 
 
-@mixin.theme_mixin
+@theme.mixin
 class InfoMessage(base.BaseWidget, object):
     def __init__(self, name='', description='', instructions='', parent=None):
         self._name = ''

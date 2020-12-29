@@ -11,11 +11,12 @@ from Qt.QtWidgets import QGraphicsItem, QGraphicsPathItem, QGraphicsScene, QGrap
 from Qt.QtGui import QColor, QPainterPath, QPainter, QPen, QBrush, QRadialGradient, QKeySequence, QKeyEvent
 
 from tpDcc.libs.python import bezier
-from tpDcc.libs.qt.core import base, mixin
+from tpDcc.libs.resources.core import theme
+from tpDcc.libs.qt.core import base
 from tpDcc.libs.qt.widgets import layouts, dividers, combobox, checkbox
 
 
-@mixin.theme_mixin
+@theme.mixin
 class FallofCurveWidget(base.BaseWidget, object):
 
     curveUpdated = Signal(list)
@@ -128,7 +129,7 @@ class FallofCurveWidget(base.BaseWidget, object):
         self.curveUpdated.emit(curve_points)
 
 
-@mixin.theme_mixin
+@theme.mixin
 class BezierCurveItem(QGraphicsPathItem, object):
     def __init__(self, parent=None):
         super(BezierCurveItem, self).__init__(parent)
@@ -167,7 +168,7 @@ class CurveNodeItemSignals(QObject):
     curveUpdated = Signal()
 
 
-@mixin.theme_mixin
+@theme.mixin
 class CurveNodeItem(QGraphicsItem, object):
 
     curveUpdated = Signal()
