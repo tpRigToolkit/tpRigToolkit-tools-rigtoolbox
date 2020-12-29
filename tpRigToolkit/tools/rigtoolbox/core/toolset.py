@@ -14,83 +14,24 @@ __email__ = "tpovedatd@gmail.com"
 
 import os
 import logging
-import importlib
 
 from Qt.QtCore import Qt
 from Qt.QtWidgets import QSizePolicy, QToolButton, QMainWindow
 
-from tpDcc import dcc
-from tpDcc.core import tool
 from tpDcc.managers import resources
 from tpDcc.libs.python import yamlio
 from tpDcc.libs.qt.core import base
 from tpDcc.libs.qt.widgets import window, toolset, progressbar, dock, message, buttons
 
-from tpRigToolkit.tools.rigtoolbox.widgets import dock, base as base_widgets
-from tpRigToolkit.tools.rigtoolbox.widgets import library
+from tpRigToolkit.tools.rigtoolbox.core import consts
+from tpRigToolkit.tools.rigtoolbox.widgets import dock, library, base as base_widgets
 
-LOGGER = logging.getLogger('tpRigToolkit-tools-rigtoolbox')
-
-# Defines ID of the tool
-TOOL_ID = 'tpRigToolkit-tools-rigtoolbox'
-
-
-class RigToolboxTool(tool.DccTool, object):
-    def __init__(self, *args, **kwargs):
-        super(RigToolboxTool, self).__init__(*args, **kwargs)
-
-    @classmethod
-    def config_dict(cls, file_name=None):
-        base_tool_config = tool.DccTool.config_dict(file_name=file_name)
-        tool_config = {
-            'name': 'Rig ToolBox',
-            'id': 'tpRigToolkit-tools-rigtoolbox',
-            'logo': 'rigtoolbox',
-            'icon': 'rigtoolbox',
-            'tooltip': 'Collection of tools to improve the rigging process',
-            'tags': ['tpRigToolkit', 'rig', 'tools', 'toolbox'],
-            'logger_dir': os.path.join(os.path.expanduser('~'), 'tpRigToolkit', 'logs', 'tools'),
-            'logger_level': 'INFO',
-            'is_checkable': False,
-            'is_checked': False,
-            'menu_ui': {'label': 'Rig ToolBox', 'load_on_startup': False, 'color': '', 'background_color': ''}
-        }
-        base_tool_config.update(tool_config)
-
-        return base_tool_config
-
-    def launch(self, *args, **kwargs):
-        return self.launch_frameless(*args, **kwargs)
+LOGGER = logging.getLogger(consts.TOOL_ID)
 
 
 class RigToolboxToolset(toolset.ToolsetWidget, object):
-
-    ID = TOOL_ID
-
     def __init__(self, *args, **kwargs):
         super(RigToolboxToolset, self).__init__(*args, **kwargs)
-
-    def setup_client(self):
-
-        from tpRigToolkit.tools.rigtoolbox.core import rigtoolboxclient
-
-        self._client = rigtoolboxclient.RigToolboxClient()
-        self._client.signals.dccDisconnected.connect(self._on_dcc_disconnected)
-
-        if not dcc.is_standalone():
-            dcc_mod_name = '{}.dccs.{}.rigtoolboxserver'.format(TOOL_ID.replace('-', '.'), dcc.get_name())
-            try:
-                mod = importlib.import_module(dcc_mod_name)
-                if hasattr(mod, 'RigToolboxServer'):
-                    server = mod.RigToolboxServer(self, client=self._client, update_paths=False)
-                    self._client.set_server(server)
-                    self._update_client()
-            except Exception as exc:
-                LOGGER.warning(
-                    'Impossible to launch RigToolbox server! Error while importing: {} >> {}'.format(dcc_mod_name, exc))
-                return
-        else:
-            self._update_client()
 
     def help_mode(self, flag):
         if not flag:
@@ -102,9 +43,9 @@ class RigToolboxToolset(toolset.ToolsetWidget, object):
         return help_event
 
     def contents(self):
-        dcc_name, dcc_version = self._client.get_dcc_info()
+        dcc_name, dcc_version, _ = self.client.get_dcc_info()
 
-        self._client.load_plugins()
+        self.client.load_plugins()
 
         commands_datas = dict()
         if dcc_name:
@@ -131,22 +72,13 @@ class RigToolboxToolset(toolset.ToolsetWidget, object):
         self._toolbox_widgets = list()
         if not dcc_name:
             from tpRigToolkit.tools.rigtoolbox.widgets import base
-            toolbox_widget = base.BaseRigToolBoxWidget(
-                title='Hello World!', commands_data=None, controller=None, parent=self)
-            bug_icon = resources.icon('bug')
-            palette_icon = resources.icon('palette')
-            print('Bug Icon', bug_icon)
-            print('Palette Icon', palette_icon)
-            toolbox_widget.main_layout.addWidget(buttons.BaseButton('Hello', icon=bug_icon, parent=self))
-            toolbox_widget.main_layout.addWidget(
-                buttons.BaseButton('Hello2', icon=resources.icon('download'), parent=self))
-            toolbox_widget.main_layout.addWidget(buttons.BaseButton('Hello2', icon=palette_icon, parent=self))
+            toolbox_widget = base.BaseRigToolBoxWidget(title='Hello World!', parent=self)
             self._toolbox_widgets.append(toolbox_widget)
 
-        if dcc.is_maya():
+        if self.client.is_maya():
             from tpRigToolkit.tools.rigtoolbox.dccs import maya
             self._toolbox_widgets = maya.get_toolbox_widgets(
-                client=self._client, commands_data=commands_datas, parent=self)
+                client=self.client, commands_data=commands_datas, parent=self)
         self._rig_toolbox_widget.load_widgets(self._toolbox_widgets, parent=self)
 
         library.Command.startCommand.connect(self._rig_toolbox_widget._on_start_command)
@@ -199,7 +131,8 @@ class RigToolboxWidget(base.BaseWidget, object):
                 info_button.setCheckable(True)
                 info_button.setChecked(True)
                 info_button.setIcon(resources.icon('info', theme='color'))
-                info_button.toggled.connect(w._on_toggle_info)
+                if hasattr(w, '_on_toggle_info'):
+                    info_button.toggled.connect(w._on_toggle_info)
                 dock_widget.add_button(info_button)
             else:
                 dock_widget = dock.DockWidget(w.objectName(), parent=parent or self)
