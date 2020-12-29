@@ -478,6 +478,10 @@ def average_vertices_weights(selection, use_distance, curve_weight_points=None):
                 end = vert_list[-1]
                 surface = start.split('.')[0]
                 obj_type = maya.cmds.objectType(surface)
+                if obj_type == 'transform':
+                    shape = maya.cmds.listRelatives(surface, shapes=True)
+                    if shape:
+                        obj_type = maya.cmds.objectType(shape[0])
 
                 poly = False
                 if obj_type == 'mesh':

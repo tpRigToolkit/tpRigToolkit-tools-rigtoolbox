@@ -7,6 +7,8 @@ Module that contains library with general functions
 
 from __future__ import print_function, division, absolute_import
 
+import re
+
 import maya.cmds
 
 from tpDcc import dcc
@@ -647,6 +649,42 @@ def combine_meshes(meshes=None, new_mesh_name=None):
 
 @decorators.undo
 @decorators.repeat_static_command(__name__, skip_arguments=True)
+def separate_meshes(meshes=None, new_mesh_name=None):
+    """
+    Separates given meshes into one transform
+    """
+
+    out_dict = {'success': False, 'result': None}
+
+    meshes = meshes or dcc.selected_nodes_of_type(node_type='transform')
+    meshes = python.force_list(meshes)
+    if not meshes:
+        out_dict['msg'] = 'No meshes to separate selected.'
+        return out_dict
+    new_mesh_name = new_mesh_name or dcc.node_short_name(meshes[0])
+
+    try:
+        result_meshes = list()
+        separated_meshes = dcc.separate_meshes(construction_history=False)
+        if not separated_meshes:
+            out_dict['msg'] = 'Separate operation was done but not separated mesh was generated'
+            return out_dict
+        for separated_mesh in separated_meshes:
+            separated_mesh = dcc.rename_node(separated_mesh, new_mesh_name)
+            result_meshes.append(separated_mesh)
+
+        out_dict['result'] = result_meshes
+    except Exception as exc:
+        out_dict['msg'] = 'Was not possible to separate meshes "{}" : {}'.format(meshes, exc)
+        return out_dict
+
+    out_dict['success'] = True
+
+    return out_dict
+
+
+@decorators.undo
+@decorators.repeat_static_command(__name__, skip_arguments=True)
 def mirror_mesh(mesh=None):
     """
     Mirror given meshes
@@ -694,6 +732,77 @@ def open_symmetry_tool():
         out_dict['result'] = tool
     except Exception as exc:
         out_dict['msg'] = 'Was not to open symmetry tool : {} '.format(exc)
+        return out_dict
+
+    out_dict['success'] = True
+
+    return out_dict
+
+
+@decorators.undo
+@decorators.repeat_static_command(__name__, skip_arguments=True)
+def detach_components(components=None):
+    """
+    Detach selected components
+    """
+
+    out_dict = {'success': False, 'result': list()}
+
+    selection = components or dcc.selected_nodes()
+    if not selection:
+        out_dict['msg'] = 'No components to detach selected.'
+        return out_dict
+
+    try:
+        maya.cmds.DetachComponent()
+    except Exception as exc:
+        out_dict['msg'] = 'Was not possible to detach components "{}" : '.format(selection, exc)
+        return out_dict
+
+    out_dict['success'] = True
+
+    return out_dict
+
+
+@decorators.undo
+@decorators.repeat_static_command(__name__, skip_arguments=True)
+def detach_edges(edges=None):
+    """
+    Detach selected edges in different groups
+    """
+
+    # make list of edges, that belong to certain object
+    def _group_edges(obj, edges_list):
+        return [item for item in edges_list if re.match(obj, item)]
+
+    out_dict = {'success': False, 'result': list()}
+
+    valid_edges = list()
+    selection = edges or dcc.selected_nodes()
+    selection = python.force_list(selection)
+    for obj in selection:
+        obj_type = maya.cmds.nodeType(obj)
+        if obj_type == 'transform':
+            continue
+        is_edge = maya.cmds.filterExpand(sm=32)
+        if is_edge is None:
+            continue
+        valid_edges.append(obj)
+
+    if not valid_edges:
+        out_dict['msg'] = 'No edges to detach selected.'
+        return out_dict
+
+    obj_list = [edge.split('.')[0] for edge in valid_edges]
+    edge_list = [_group_edges(obj, valid_edges) for obj in obj_list]
+
+    try:
+        for edge_group in edge_list:
+            maya.cmds.select(edge_group)
+            maya.cmds.polySplitEdge()
+            out_dict['result'].append(edge_group)
+    except Exception as exc:
+        out_dict['msg'] = 'Was not possible to detach edges "{}" : '.format(valid_edges, exc)
         return out_dict
 
     out_dict['success'] = True

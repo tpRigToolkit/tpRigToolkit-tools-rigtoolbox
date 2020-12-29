@@ -126,6 +126,12 @@ combine_meshes:
   description: Combines selected meshes into one. New mesh is parented to the parent of the first selected mesh.Press Shift before executing the command to type new mesh name. Pivot of the combine meshes will be located in the (0, 0, 0) of the world.
   instructions: <ol><li>Select the transform nodes of the meshes you want to combine</li><li></li><li>Execute command</li></ol>
 
+separate_meshes:
+  name: Separate Meshes
+  icon: separate
+  categories:
+    - Geometry
+
 mirror_meshes:
   name: Mirror Meshes
   icon: mirror
@@ -138,3 +144,9 @@ open_symmetry_tool:
   categories:
     - Geometry
   description: Opens tpRigToolkit-tools-meshsymmetry
+
+detach_components:
+  name: Detach Components
+  icon: detach
+  categories:
+    - Geometry

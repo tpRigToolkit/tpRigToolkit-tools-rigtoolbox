@@ -108,8 +108,14 @@ class GeneralWidgetController(object):
 
         return self._client.combine_meshes(new_mesh_name=new_mesh_name)
 
+    def separate_meshes(self):
+        return self._client.separate_meshes()
+
     def mirror_mesh(self):
         return self._client.mirror_mesh()
 
     def open_symmetry_tool(self):
         return self._client.open_symmetry_tool()
+
+    def detach_components(self):
+        return self._client.detach_components()

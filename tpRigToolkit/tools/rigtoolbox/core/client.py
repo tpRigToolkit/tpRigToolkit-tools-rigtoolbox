@@ -262,6 +262,19 @@ class RigToolboxClient(client.DccClient, object):
 
         return reply_dict['success']
 
+    def separate_meshes(self, meshes=None):
+        cmd = {
+            'cmd': 'separate_meshes',
+            'meshes': meshes,
+        }
+
+        reply_dict = self.send(cmd)
+
+        if not self.is_valid_reply(reply_dict):
+            return list()
+
+        return reply_dict['success']
+
     def mirror_mesh(self, meshes=None):
         cmd = {
             'cmd': 'mirror_mesh',
@@ -278,6 +291,19 @@ class RigToolboxClient(client.DccClient, object):
     def open_symmetry_tool(self):
         cmd = {
             'cmd': 'open_symmetry_tool'
+        }
+
+        reply_dict = self.send(cmd)
+
+        if not self.is_valid_reply(reply_dict):
+            return list()
+
+        return reply_dict['success']
+
+    def detach_components(self, components=None):
+        cmd = {
+            'cmd': 'detach_components',
+            'components': components
         }
 
         reply_dict = self.send(cmd)

@@ -242,6 +242,17 @@ class RigToolboxServer(server.DccServer, object):
                 reply['msg'] = 'Something went wrong while combining meshes: {}'.format(traceback.format_exc())
             reply['success'] = False
 
+    def separate_meshes(self, data, reply):
+        meshes = data['meshes']
+
+        try:
+            result = general.separate_meshes(meshes)
+            reply.update(result)
+        except Exception:
+            if not reply['msg']:
+                reply['msg'] = 'Something went wrong while separating meshes: {}'.format(traceback.format_exc())
+            reply['success'] = False
+
     def mirror_mesh(self, data, reply):
         mesh = data['mesh']
 
@@ -260,6 +271,17 @@ class RigToolboxServer(server.DccServer, object):
         except Exception:
             if not reply['msg']:
                 reply['msg'] = 'Something went wrong while opening symmetry tool: {}'.format(traceback.format_exc())
+            reply['success'] = False
+
+    def detach_components(self, data, reply):
+        components = data['components']
+
+        try:
+            result = general.detach_components(components)
+            reply.update(result)
+        except Exception:
+            if not reply['msg']:
+                reply['msg'] = 'Something went wrong while detaching components: {}'.format(traceback.format_exc())
             reply['success'] = False
 
     # =================================================================================================================
