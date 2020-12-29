@@ -66,7 +66,8 @@ class CommandRigToolBoxWidget(BaseRigToolBoxWidget, object):
         super(CommandRigToolBoxWidget, self).__init__(title=title, parent=parent)
 
         if self._controller:
-            controller_functions = inspect.getmembers(self._controller.__class__, predicate=inspect.ismethod)
+            predicate = inspect.ismethod if python.is_python2() else inspect.isfunction
+            controller_functions = inspect.getmembers(self._controller.__class__, predicate=predicate)
             for controller_fn_data in controller_functions:
                 if controller_fn_data[0] in ['__init__']:
                     continue
