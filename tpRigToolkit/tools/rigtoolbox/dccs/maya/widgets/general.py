@@ -120,7 +120,6 @@ class GeneralWidgetController(object):
     def mirror_meshes_options(self):
         return self._client.mirror_meshes_options()
 
-
     def open_symmetry_tool(self):
         return self._client.open_symmetry_tool()
 

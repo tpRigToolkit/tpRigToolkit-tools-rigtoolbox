@@ -202,7 +202,7 @@ class RigToolboxServer(server.DccServer, object):
                 reply['msg'] = 'Something went wrong while locking visibility channel: {}'.format(
                     traceback.format_exc())
             reply['success'] = False
-            
+
     def unlock_all_transforms(self, data, reply):
         transforms = data['transforms']
 
@@ -361,7 +361,8 @@ class RigToolboxServer(server.DccServer, object):
             reply.update(result)
         except Exception:
             if not reply['msg']:
-                reply['msg'] = 'Something went wrong while opening mirror mesh options: {}'.format(traceback.format_exc())
+                reply['msg'] = 'Something went wrong while opening mirror mesh options: {}'.format(
+                    traceback.format_exc())
             reply['success'] = False
 
     def open_symmetry_tool(self, data, reply):
@@ -500,7 +501,8 @@ class RigToolboxServer(server.DccServer, object):
             reply.update(result)
         except Exception:
             if not reply['msg']:
-                reply['msg'] = 'Something went wrong while toggling selected joints LRA: {}'.format(traceback.format_exc())
+                reply['msg'] = 'Something went wrong while toggling selected joints LRA: {}'.format(
+                    traceback.format_exc())
             reply['success'] = False
 
     def toggle_joints_xray(self, data, reply):
@@ -651,7 +653,7 @@ class RigToolboxServer(server.DccServer, object):
             reply.update(result)
         except Exception:
             if not reply['msg']:
-                reply['msg'] = 'Something went wrong while zeroing out orient of all joints in current scene: {}'.format(
+                reply['msg'] = 'Something wrong while zeroing out orient of all joints in current scene: {}'.format(
                     traceback.format_exc())
             reply['success'] = False
 

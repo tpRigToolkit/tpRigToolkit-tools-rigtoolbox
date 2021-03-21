@@ -340,7 +340,8 @@ class CommandRigToolBoxWidget(BaseRigToolBoxWidget, object):
 
         pos = menu.mapToGlobal(QPoint(menu.width() / 2, 0))
         final_pos = sender.mapFromGlobal(pos)
-        menu.move(menu.pos().x() - final_pos.x() + sender.width() / 2, menu.pos().y() - final_pos.y() + sender.height() - 5)
+        menu.move(
+            menu.pos().x() - final_pos.x() + sender.width() / 2, menu.pos().y() - final_pos.y() + sender.height() - 5)
 
         return menu
 
