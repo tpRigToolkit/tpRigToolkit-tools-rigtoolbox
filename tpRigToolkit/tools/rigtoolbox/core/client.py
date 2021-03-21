@@ -13,11 +13,63 @@ __maintainer__ = "Tomas Poveda"
 __email__ = "tpovedatd@gmail.com"
 
 from tpDcc.core import client
+from tpDcc.managers import tools
 
 
 class RigToolboxClient(client.DccClient, object):
 
     PORT = 19344
+
+    # =================================================================================================================
+    # RENAMER
+    # =================================================================================================================
+
+    def setup_renamer_client(self):
+
+        cmd = {
+            'cmd': 'setup_renamer_client'
+        }
+
+        reply_dict = self.send(cmd)
+
+        if not self.is_valid_reply(reply_dict):
+            return False
+
+        return reply_dict['success']
+
+    # =================================================================================================================
+    # CONTROL RIG
+    # =================================================================================================================
+
+    def setup_control_rig_client(self):
+
+        cmd = {
+            'cmd': 'setup_control_rig_client'
+        }
+
+        reply_dict = self.send(cmd)
+
+        if not self.is_valid_reply(reply_dict):
+            return False
+
+        return reply_dict['success']
+
+    # =================================================================================================================
+    # SYMMESH
+    # =================================================================================================================
+
+    def setup_symmesh_client(self):
+
+        cmd = {
+            'cmd': 'setup_symmesh_client'
+        }
+
+        reply_dict = self.send(cmd)
+
+        if not self.is_valid_reply(reply_dict):
+            return False
+
+        return reply_dict['success']
 
     # =================================================================================================================
     # MAYA - GENERAL
@@ -192,6 +244,19 @@ class RigToolboxClient(client.DccClient, object):
 
         return reply_dict['success']
 
+    def clean_student_license(self, file_path=None):
+        cmd = {
+            'cmd': 'clean_student_license',
+            'file_path': file_path
+        }
+
+        reply_dict = self.send(cmd)
+
+        if not self.is_valid_reply(reply_dict):
+            return list()
+
+        return reply_dict['success']
+
     def match_transform(self, source_transform=None, target_transform=None):
         cmd = {
             'cmd': 'match_transform',
@@ -275,10 +340,22 @@ class RigToolboxClient(client.DccClient, object):
 
         return reply_dict['success']
 
-    def mirror_mesh(self, meshes=None):
+    def mirror_meshes(self, meshes=None):
         cmd = {
-            'cmd': 'mirror_mesh',
+            'cmd': 'mirror_meshes',
             'meshes': meshes,
+        }
+
+        reply_dict = self.send(cmd)
+
+        if not self.is_valid_reply(reply_dict):
+            return list()
+
+        return reply_dict['success']
+
+    def mirror_meshes_options(self):
+        cmd = {
+            'cmd': 'mirror_meshes_options'
         }
 
         reply_dict = self.send(cmd)
@@ -312,6 +389,19 @@ class RigToolboxClient(client.DccClient, object):
             return list()
 
         return reply_dict['success']
+
+    def curve_from_edge_loop(self, mesh_edge_list=None):
+        cmd = {
+            'cmd': 'curve_from_edge_loop',
+            'mesh_edge_list': mesh_edge_list
+        }
+
+        reply_dict = self.send(cmd)
+
+        if not self.is_valid_reply(reply_dict):
+            return list()
+
+        return reply_dict['result']
 
     # =================================================================================================================
     # MAYA - JOINTS
@@ -394,6 +484,307 @@ class RigToolboxClient(client.DccClient, object):
 
         if not self.is_valid_reply(reply_dict):
             return list()
+
+        return reply_dict['success']
+
+    def toggle_local_rotation_axis(self, joints=None):
+        cmd = {
+            'cmd': 'toggle_local_rotation_axis',
+            'joints': joints
+        }
+
+        reply_dict = self.send(cmd)
+
+        if not self.is_valid_reply(reply_dict):
+            return False
+
+        return reply_dict['success']
+
+    def toggle_all_local_rotation_axis(self, flag=None):
+        cmd = {
+            'cmd': 'toggle_all_local_rotation_axis',
+            'flag': flag
+        }
+
+        reply_dict = self.send(cmd)
+
+        if not self.is_valid_reply(reply_dict):
+            return False
+
+        return reply_dict['success']
+
+    def toggle_selected_local_rotation_axis(self, flag=None):
+        cmd = {
+            'cmd': 'toggle_selected_local_rotation_axis',
+            'flag': flag
+        }
+
+        reply_dict = self.send(cmd)
+
+        if not self.is_valid_reply(reply_dict):
+            return False
+
+        return reply_dict['success']
+
+    def toggle_joints_xray(self):
+        cmd = {
+            'cmd': 'toggle_joints_xray'
+        }
+
+        reply_dict = self.send(cmd)
+
+        if not self.is_valid_reply(reply_dict):
+            return False
+
+        return reply_dict['success']
+
+    def set_joints_xray(self, flag=None):
+        cmd = {
+            'cmd': 'set_joints_xray',
+            'flag': flag
+        }
+
+        reply_dict = self.send(cmd)
+
+        if not self.is_valid_reply(reply_dict):
+            return False
+
+        return reply_dict['success']
+
+    def set_joints_display_size(self, value=None):
+        cmd = {
+            'cmd': 'set_joints_display_size',
+            'value': value
+        }
+
+        reply_dict = self.send(cmd)
+
+        if not self.is_valid_reply(reply_dict):
+            return False
+
+        return reply_dict['success']
+
+    def select_hierarchy(self):
+        cmd = {
+            'cmd': 'select_hierarchy'
+        }
+
+        reply_dict = self.send(cmd)
+
+        if not self.is_valid_reply(reply_dict):
+            return False
+
+        return reply_dict['success']
+
+    def orient_joints(self):
+        cmd = {
+            'cmd': 'orient_joints'
+        }
+
+        reply_dict = self.send(cmd)
+
+        if not self.is_valid_reply(reply_dict):
+            return False
+
+        return reply_dict['success']
+
+    def orient_all_joints(self):
+        cmd = {
+            'cmd': 'orient_all_joints'
+        }
+
+        reply_dict = self.send(cmd)
+
+        if not self.is_valid_reply(reply_dict):
+            return False
+
+        return reply_dict['success']
+
+    def orient_selected_joints(self):
+        cmd = {
+            'cmd': 'orient_selected_joints'
+        }
+
+        reply_dict = self.send(cmd)
+
+        if not self.is_valid_reply(reply_dict):
+            return False
+
+        return reply_dict['success']
+
+    def add_orient_data(self):
+        cmd = {
+            'cmd': 'add_orient_data'
+        }
+
+        reply_dict = self.send(cmd)
+
+        if not self.is_valid_reply(reply_dict):
+            return False
+
+        return reply_dict['success']
+
+    def add_orient_data_all_joints(self):
+        cmd = {
+            'cmd': 'add_orient_data_all_joints'
+        }
+
+        reply_dict = self.send(cmd)
+
+        if not self.is_valid_reply(reply_dict):
+            return False
+
+        return reply_dict['success']
+
+    def add_orient_data_selected_joints(self):
+        cmd = {
+            'cmd': 'add_orient_data_selected_joints'
+        }
+
+        reply_dict = self.send(cmd)
+
+        if not self.is_valid_reply(reply_dict):
+            return False
+
+        return reply_dict['success']
+
+    def clean_orient_data(self):
+        cmd = {
+            'cmd': 'clean_orient_data'
+        }
+
+        reply_dict = self.send(cmd)
+
+        if not self.is_valid_reply(reply_dict):
+            return False
+
+        return reply_dict['success']
+
+    def clean_orient_data_all_joints(self):
+        cmd = {
+            'cmd': 'clean_orient_data_all_joints'
+        }
+
+        reply_dict = self.send(cmd)
+
+        if not self.is_valid_reply(reply_dict):
+            return False
+
+        return reply_dict['success']
+
+    def clean_orient_data_selected_joints(self):
+        cmd = {
+            'cmd': 'clean_orient_data_selected_joints'
+        }
+
+        reply_dict = self.send(cmd)
+
+        if not self.is_valid_reply(reply_dict):
+            return False
+
+        return reply_dict['success']
+
+    def zero_joint_orient(self):
+        cmd = {
+            'cmd': 'zero_joint_orient'
+        }
+
+        reply_dict = self.send(cmd)
+
+        if not self.is_valid_reply(reply_dict):
+            return False
+
+        return reply_dict['success']
+
+    def zero_joint_orient_all_joints(self):
+        cmd = {
+            'cmd': 'zero_joint_orient_all_joints'
+        }
+
+        reply_dict = self.send(cmd)
+
+        if not self.is_valid_reply(reply_dict):
+            return False
+
+        return reply_dict['success']
+
+    def zero_joint_orient_selected_joints(self):
+        cmd = {
+            'cmd': 'zero_joint_orient_selected_joints'
+        }
+
+        reply_dict = self.send(cmd)
+
+        if not self.is_valid_reply(reply_dict):
+            return False
+
+        return reply_dict['success']
+
+    def orient_tool(self):
+
+        cmd = {
+            'cmd': 'setup_orient_joint_client'
+        }
+
+        reply_dict = self.send(cmd)
+
+        if not self.is_valid_reply(reply_dict):
+            return False
+
+        # Once client is up and running in DCC, we can launch the tool
+        tools.ToolsManager().launch_tool_by_id('tpRigToolkit-tools-jointorient')
+
+        return reply_dict['success']
+
+    def mirror_joints(self):
+
+        cmd = {
+            'cmd': 'mirror_joints'
+        }
+
+        reply_dict = self.send(cmd)
+
+        if not self.is_valid_reply(reply_dict):
+            return False
+
+        return reply_dict['success']
+
+    def mirror_all_joints(self):
+
+        cmd = {
+            'cmd': 'mirror_all_joints'
+        }
+
+        reply_dict = self.send(cmd)
+
+        if not self.is_valid_reply(reply_dict):
+            return False
+
+        return reply_dict['success']
+
+    def mirror_selected_joints(self):
+
+        cmd = {
+            'cmd': 'mirror_selected_joints'
+        }
+
+        reply_dict = self.send(cmd)
+
+        if not self.is_valid_reply(reply_dict):
+            return False
+
+        return reply_dict['success']
+
+    def mirror_hierarchy_joints(self):
+
+        cmd = {
+            'cmd': 'mirror_hierarchy_joints'
+        }
+
+        reply_dict = self.send(cmd)
+
+        if not self.is_valid_reply(reply_dict):
+            return False
 
         return reply_dict['success']
 
@@ -724,6 +1115,44 @@ class RigToolboxClient(client.DccClient, object):
             'mesh_nodes': mesh_nodes,
             'influences_to_remove': influences_to_remove,
             'fast_delete': fast_delete
+        }
+
+        reply_dict = self.send(cmd)
+
+        if not self.is_valid_reply(reply_dict):
+            return list()
+
+        return reply_dict['success']
+
+    def br_smooth_weights(self, options=False):
+        cmd = {
+            'cmd': 'br_smooth_weights',
+            'options': options
+        }
+
+        reply_dict = self.send(cmd)
+
+        if not self.is_valid_reply(reply_dict):
+            return list()
+
+        return reply_dict['success']
+
+    def br_transfer_weights(self, options=False):
+        cmd = {
+            'cmd': 'br_transfer_weights',
+            'options': options
+        }
+
+        reply_dict = self.send(cmd)
+
+        if not self.is_valid_reply(reply_dict):
+            return list()
+
+        return reply_dict['success']
+
+    def ng_skin_tools(self):
+        cmd = {
+            'cmd': 'ng_skin_tools'
         }
 
         reply_dict = self.send(cmd)
