@@ -102,7 +102,7 @@ class CommandRigToolBoxWidget(BaseRigToolBoxWidget, object):
         self._info_frame.main_layout.addLayout(info_frame_layout)
         self._info_frame.setVisible(False)
 
-        self._accordion = accordion.AccordionWidget()
+        self._accordion = accordion.AccordionWidget(parent=self)
         self._content_layout.addWidget(self._accordion)
 
         self.main_layout.addWidget(self._info_widget)
@@ -163,6 +163,12 @@ class CommandRigToolBoxWidget(BaseRigToolBoxWidget, object):
             new_command_data.pop('categories')       # categories is not part of the command creation
             new_command_data.pop('options', None)
             new_command = self._create_button(fn=command_function, settings=options, **new_command_data)
+
+            is_available = self._check_command_availability(command_name)
+            if not is_available:
+                new_command.setToolTip('Command "{}" is not available!'.format(command_name))
+                new_command.setEnabled(False)
+
             commands_to_add.append(new_command)
 
         if not commands_to_add:
@@ -177,6 +183,17 @@ class CommandRigToolBoxWidget(BaseRigToolBoxWidget, object):
             category_layout.addWidget(command)
 
         return category_widget
+
+    def _check_command_availability(self, command_name):
+        """
+        Internal function that returns whether or not given command is available
+        Should be override in custom widgets to enable/disable commands
+        By default, all commands are available
+        :param command_name: str
+        :return: bool
+        """
+
+        return True
 
     def _create_button(
             self, name=None, icon=None, fn=None, status=None, tooltip=None, description=None, instructions=None,
