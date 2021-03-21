@@ -3,6 +3,12 @@ tpRigToolkit-tools-rigtoolbox
 
 Collection of rigging tools
 
+.. image:: https://img.shields.io/badge/Python-2.7-yellow?logo=python
+    :target: https://www.python.org/
+
+.. image:: https://img.shields.io/badge/Python-3.7-yellow?logo=python
+    :target: https://www.python.org/
+    
 .. image:: https://travis-ci.com/tpRigToolkit/tpRigToolkit-tools-rigtoolbox.svg?branch=master&kill_cache=1
     :target: https://travis-ci.com/tpRigToolkit/tpRigToolkit-tools-rigtoolbox
 
