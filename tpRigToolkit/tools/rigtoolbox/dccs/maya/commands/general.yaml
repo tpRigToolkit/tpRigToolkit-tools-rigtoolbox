@@ -86,6 +86,12 @@ unlock_visibility:
   description: Unlock visibility channel of the selected transform nodes.
   instructions: <ol><li>Select one or multiple transform nodes from viewport</li><li>Execute command</li></ol>
 
+clean_student_license:
+  name: Clean Student License
+  icon: student
+  categories:
+    - General
+
 match_transform:
   name: Match Transform
   icon: match_transform
@@ -137,16 +143,25 @@ mirror_meshes:
   icon: mirror
   categories:
     - Geometry
+  options:
+    mirror_meshes_options:
+      name: Open Mirror Mesh Options
 
 open_symmetry_tool:
   name: Symmetry Tool
   icon: symmetry
   categories:
     - Geometry
-  description: Opens tpRigToolkit-tools-meshsymmetry
+  description: Opens tpRigToolkit-tools-symmesh
 
 detach_components:
   name: Detach Components
   icon: detach
+  categories:
+    - Geometry
+
+curve_from_edge_loop:
+  name: Create Curve from Edge Loop
+  icon: duplicate_curve
   categories:
     - Geometry

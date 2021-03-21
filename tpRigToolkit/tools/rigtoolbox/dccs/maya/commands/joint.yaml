@@ -10,6 +10,12 @@ create_new_joint_on_center:
   categories:
     - Create
 
+create_new_joints_on_selected_components:
+  name: New Joints on Selected Components
+  icon: joint
+  categories:
+    - Create
+
 insert_joints:
   name: Insert Joints
   icon: joint
@@ -26,7 +32,6 @@ create_joints_on_curve:
   widgets:
     - _create_joints_on_curve_widget
 
-
 snap_joints_to_curve:
   name: Snap Joints to Selected Curve
   icon: joint
@@ -34,3 +39,131 @@ snap_joints_to_curve:
     - Create
   widgets:
     - _snap_joints_to_curve_widget
+
+
+toggle_local_rotation_axis:
+  name: Toggle LRA
+  icon: local_rotation_on
+  categories:
+    - Display
+  options:
+    toggle_all_local_rotation_axis:
+      name: Toggle All Local Rotation Axis
+      icon: local_rotation_on
+    toggle_selected_local_rotation_axis:
+      name: Toggle Selected Local Rotation Axis
+      icon: local_rotation_on_selection
+    on_all_local_rotation_axis:
+      name: On | All Local Rotation Axis
+      icon: local_rotation_on_all
+    off_all_local_rotation_axis:
+      name: Off | All Local Rotation Axis
+      icon: local_rotation_off_all
+    on_selected_local_rotation_axis:
+      name: On | Selected Local Rotation Axis
+      icon: local_rotation_on_selection
+    off_selected_local_rotation_axis:
+      name: Off | Selected Local Rotation Axis
+      icon: local_rotation_off_selection
+
+toggle_joints_xray:
+  name: Toggle Joints X-Ray
+  icon: xray_joints_on
+  categories:
+    - Display
+  options:
+    on_joints_xray:
+      name: On | Joints X-Ray
+      icon: xray_joints_on
+    off_joints_xray:
+      name: Off | Joints X-Ray
+      icon: xray_joints_off
+
+joint_display_size:
+  name: Joint Display Size
+  icon: joint
+  categories:
+    - Display
+  widgets:
+    - _joints_display_size_widget
+
+select_hierarchy:
+  name: Select Hierarchy
+  icon: cursor
+  categories:
+    - Selection
+
+orient_joints:
+  name: Orient Joints
+  icon: orient_joints
+  categories:
+    - Orient
+  options:
+    orient_all_joints:
+      name: Orient All Joints
+      icon: orient_all_joints
+    orient_selected_joints:
+      name: Orient Selected Joints
+      icon: orient_selected_joints
+
+add_orient_data:
+  name: Add Orient Data
+  icon: plus
+  categories:
+    - Orient
+  options:
+    add_orient_data_all_joints:
+      name: Add Orient Data All Joints
+      icon: plus
+    add_orient_data_selected_joints:
+      name: Add Orient Data Selected Joints
+      icon: plus
+
+clean_orient_data:
+  name: Clean Orient Data
+  icon: clean
+  categories:
+    - Orient
+  options:
+    clean_orient_data_all_joints:
+      name: Clean Orient Data All Joints
+      icon: clean
+    clean_orient_data_selected_joints:
+      name: Clean Orient Data Selected Joints
+      icon: clean
+
+zero_joint_orient:
+  name: Zero Joint Orient
+  icon: reset
+  categories:
+    - Orient
+  options:
+    zero_joint_orient_all_joints:
+      name: Zero Out All Joints Orientation
+      icon: reset
+    zero_joint_orient_selected_joints:
+      name: Zero Out Selected Joints Orientation
+      icon: reset
+
+orient_tool:
+  name: Joint Orient Tool
+  icon: orient_tool
+  categories:
+    - Orient
+
+
+mirror_joints:
+  name: Mirror Joints
+  icon: mirror
+  categories:
+    - Mirror
+  options:
+    mirror_all_joints:
+      name: Mirror All Joints
+      icon: mirror_all
+    mirror_selected_joints:
+      name: Mirror Selected Joints
+      icon: mirror_selection
+    mirror_hierarchy_joints:
+      name: Mirror Hierarchy Joints
+      icon: mirror_selection

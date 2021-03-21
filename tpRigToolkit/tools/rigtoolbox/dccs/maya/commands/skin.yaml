@@ -144,3 +144,27 @@ delete_influences:
     - Setup
   widgets:
     - _fast_delete_cbx
+
+br_smooth_weights:
+  name: Smooth Weights
+  icon: brSmoothWeights
+  categories:
+    - Brave Rabbit
+  options:
+    br_smooth_weights_options:
+      name: Smooth Weights Tool
+
+br_transfer_weights:
+  name: Transfer Weights
+  icon: brTransferWeights
+  categories:
+    - Brave Rabbit
+  options:
+    br_transfer_weights_options:
+      name: Transfer Weights Tool
+
+ng_skin_tools:
+  name: ngSkinTools
+  icon: ngSkinTools
+  categories:
+    - ngSkinTools
