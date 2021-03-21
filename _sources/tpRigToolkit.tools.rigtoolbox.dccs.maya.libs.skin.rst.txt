@@ -1,0 +1,7 @@
+tpRigToolkit.tools.rigtoolbox.dccs.maya.libs.skin module
+========================================================
+
+.. automodule:: tpRigToolkit.tools.rigtoolbox.dccs.maya.libs.skin
+   :members:
+   :undoc-members:
+   :show-inheritance:

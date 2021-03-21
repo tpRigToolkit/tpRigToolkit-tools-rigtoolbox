@@ -1,0 +1,7 @@
+tpRigToolkit.tools.rigtoolbox.dccs.maya.widgets.symmesh module
+==============================================================
+
+.. automodule:: tpRigToolkit.tools.rigtoolbox.dccs.maya.widgets.symmesh
+   :members:
+   :undoc-members:
+   :show-inheritance:

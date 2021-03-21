@@ -1,0 +1,7 @@
+tpRigToolkit.tools.rigtoolbox.widgets.fallofcurve module
+========================================================
+
+.. automodule:: tpRigToolkit.tools.rigtoolbox.widgets.fallofcurve
+   :members:
+   :undoc-members:
+   :show-inheritance:

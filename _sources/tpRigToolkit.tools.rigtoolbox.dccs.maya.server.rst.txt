@@ -1,0 +1,7 @@
+tpRigToolkit.tools.rigtoolbox.dccs.maya.server module
+=====================================================
+
+.. automodule:: tpRigToolkit.tools.rigtoolbox.dccs.maya.server
+   :members:
+   :undoc-members:
+   :show-inheritance:

@@ -1,0 +1,24 @@
+tpRigToolkit.tools.rigtoolbox.dccs.maya.widgets package
+=======================================================
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 4
+
+   tpRigToolkit.tools.rigtoolbox.dccs.maya.widgets.control
+   tpRigToolkit.tools.rigtoolbox.dccs.maya.widgets.general
+   tpRigToolkit.tools.rigtoolbox.dccs.maya.widgets.joint
+   tpRigToolkit.tools.rigtoolbox.dccs.maya.widgets.labelsdialog
+   tpRigToolkit.tools.rigtoolbox.dccs.maya.widgets.rename
+   tpRigToolkit.tools.rigtoolbox.dccs.maya.widgets.skin
+   tpRigToolkit.tools.rigtoolbox.dccs.maya.widgets.symmesh
+
+Module contents
+---------------
+
+.. automodule:: tpRigToolkit.tools.rigtoolbox.dccs.maya.widgets
+   :members:
+   :undoc-members:
+   :show-inheritance:

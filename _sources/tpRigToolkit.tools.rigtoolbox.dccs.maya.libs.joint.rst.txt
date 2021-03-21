@@ -1,0 +1,7 @@
+tpRigToolkit.tools.rigtoolbox.dccs.maya.libs.joint module
+=========================================================
+
+.. automodule:: tpRigToolkit.tools.rigtoolbox.dccs.maya.libs.joint
+   :members:
+   :undoc-members:
+   :show-inheritance:

@@ -1,0 +1,7 @@
+tpRigToolkit.tools.rigtoolbox.dccs.maya.widgets.rename module
+=============================================================
+
+.. automodule:: tpRigToolkit.tools.rigtoolbox.dccs.maya.widgets.rename
+   :members:
+   :undoc-members:
+   :show-inheritance:

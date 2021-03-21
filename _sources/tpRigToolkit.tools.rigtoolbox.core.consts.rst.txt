@@ -1,0 +1,7 @@
+tpRigToolkit.tools.rigtoolbox.core.consts module
+================================================
+
+.. automodule:: tpRigToolkit.tools.rigtoolbox.core.consts
+   :members:
+   :undoc-members:
+   :show-inheritance:

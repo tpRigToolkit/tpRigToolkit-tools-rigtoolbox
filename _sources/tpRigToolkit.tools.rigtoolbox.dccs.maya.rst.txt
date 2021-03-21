@@ -1,0 +1,27 @@
+tpRigToolkit.tools.rigtoolbox.dccs.maya package
+===============================================
+
+Subpackages
+-----------
+
+.. toctree::
+   :maxdepth: 4
+
+   tpRigToolkit.tools.rigtoolbox.dccs.maya.libs
+   tpRigToolkit.tools.rigtoolbox.dccs.maya.widgets
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 4
+
+   tpRigToolkit.tools.rigtoolbox.dccs.maya.server
+
+Module contents
+---------------
+
+.. automodule:: tpRigToolkit.tools.rigtoolbox.dccs.maya
+   :members:
+   :undoc-members:
+   :show-inheritance:

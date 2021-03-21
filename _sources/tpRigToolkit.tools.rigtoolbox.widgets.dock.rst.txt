@@ -1,0 +1,7 @@
+tpRigToolkit.tools.rigtoolbox.widgets.dock module
+=================================================
+
+.. automodule:: tpRigToolkit.tools.rigtoolbox.widgets.dock
+   :members:
+   :undoc-members:
+   :show-inheritance:

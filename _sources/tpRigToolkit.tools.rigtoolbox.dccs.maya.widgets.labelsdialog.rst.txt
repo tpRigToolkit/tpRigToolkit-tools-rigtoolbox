@@ -1,0 +1,7 @@
+tpRigToolkit.tools.rigtoolbox.dccs.maya.widgets.labelsdialog module
+===================================================================
+
+.. automodule:: tpRigToolkit.tools.rigtoolbox.dccs.maya.widgets.labelsdialog
+   :members:
+   :undoc-members:
+   :show-inheritance:

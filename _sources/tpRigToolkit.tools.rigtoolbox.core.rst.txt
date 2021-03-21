@@ -1,0 +1,21 @@
+tpRigToolkit.tools.rigtoolbox.core package
+==========================================
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 4
+
+   tpRigToolkit.tools.rigtoolbox.core.client
+   tpRigToolkit.tools.rigtoolbox.core.consts
+   tpRigToolkit.tools.rigtoolbox.core.tool
+   tpRigToolkit.tools.rigtoolbox.core.toolset
+
+Module contents
+---------------
+
+.. automodule:: tpRigToolkit.tools.rigtoolbox.core
+   :members:
+   :undoc-members:
+   :show-inheritance:

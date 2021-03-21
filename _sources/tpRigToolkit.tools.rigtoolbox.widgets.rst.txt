@@ -1,0 +1,22 @@
+tpRigToolkit.tools.rigtoolbox.widgets package
+=============================================
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 4
+
+   tpRigToolkit.tools.rigtoolbox.widgets.base
+   tpRigToolkit.tools.rigtoolbox.widgets.dock
+   tpRigToolkit.tools.rigtoolbox.widgets.fallofcurve
+   tpRigToolkit.tools.rigtoolbox.widgets.info
+   tpRigToolkit.tools.rigtoolbox.widgets.library
+
+Module contents
+---------------
+
+.. automodule:: tpRigToolkit.tools.rigtoolbox.widgets
+   :members:
+   :undoc-members:
+   :show-inheritance:

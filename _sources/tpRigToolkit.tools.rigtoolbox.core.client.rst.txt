@@ -1,0 +1,7 @@
+tpRigToolkit.tools.rigtoolbox.core.client module
+================================================
+
+.. automodule:: tpRigToolkit.tools.rigtoolbox.core.client
+   :members:
+   :undoc-members:
+   :show-inheritance:
