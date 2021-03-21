@@ -12,14 +12,14 @@ import logging
 from Qt.QtCore import Signal, QObject
 from Qt.QtWidgets import QWidget, QMessageBox
 
-from tpDcc.managers import resources
 from tpDcc.libs.qt.core import qtutils
 from tpDcc.libs.qt.widgets import layouts, checkbox
 
+from tpRigToolkit.tools.rigtoolbox.core import consts
 from tpRigToolkit.tools.rigtoolbox.widgets import base, fallofcurve
 from tpRigToolkit.tools.rigtoolbox.dccs.maya.widgets import labelsdialog
 
-LOGGER = logging.getLogger('tpRigToolkit-tools-rigtoolbox')
+LOGGER = logging.getLogger(consts.TOOL_ID)
 
 
 class SkinningWidget(base.CommandRigToolBoxWidget, object):
@@ -108,6 +108,27 @@ class SkinningWidget(base.CommandRigToolBoxWidget, object):
             self._extract_skin_faces_auto_assign_joints_labels_cbx.setChecked)
         self._model.useDistanceAverageChanged.connect(self._distance_average_cbx.setChecked)
         self._model.fastDeleteChanged.connect(self._fast_delete_cbx.setChecked)
+
+    def _check_command_availability(self, command_name):
+
+        client = self._controller.client
+        if not client:
+            return False
+
+        if command_name == 'br_smooth_weights' or command_name == 'br_transfer_weights':
+            for plugin_name in ['rampWeights.mll', 'weightsServer.mll', 'weightDriver.mll', 'brSmoothWeights.mll']:
+                client.load_plugin(plugin_name, quiet=True)
+            plugin_name = 'brSmoothWeights.mll'
+            return client.is_plugin_loaded(plugin_name)
+        elif command_name == 'ng_skin_tools':
+            plugin_names = ['ngSkinTools2.mll', 'ngSkinTools.mll']
+            for plugin_name in plugin_names:
+                client.load_plugin(plugin_name, quiet=True)
+                if client.is_plugin_loaded(plugin_name):
+                    return True
+            return False
+
+        return True
 
     def _on_show_context_menu(self):
         super(SkinningWidget, self)._on_show_context_menu()
@@ -370,6 +391,21 @@ class SkinningWidgetController(object):
     def delete_influences(self):
         fast_delete = self._model.fast_delete
         return self._client.delete_influences(fast_delete=fast_delete)
+
+    def br_smooth_weights(self):
+        return self._client.br_smooth_weights()
+
+    def br_smooth_weights_options(self):
+        return self._client.br_smooth_weights(options=True)
+
+    def br_transfer_weights_options(self):
+        return self._client.br_transfer_weights()
+
+    def br_transfer_weights(self):
+        return self._client.br_transfer_weights(options=True)
+
+    def ng_skin_tools(self):
+        return self._client.ng_skin_tools()
 
     def _check_labels(self, auto_assign_labels):
         left_side = None

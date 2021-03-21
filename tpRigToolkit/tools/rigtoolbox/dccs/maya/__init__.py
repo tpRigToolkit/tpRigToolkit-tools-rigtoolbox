@@ -7,15 +7,12 @@ Init module of RigToolbox for Maya
 
 from __future__ import print_function, division, absolute_import
 
-__author__ = "Tomas Poveda"
-__license__ = "MIT"
-__maintainer__ = "Tomas Poveda"
-__email__ = "tpovedatd@gmail.com"
-
 import logging
 import traceback
 
-LOGGER = logging.getLogger('tpRigToolkit-tools-rigtoolbox')
+from tpRigToolkit.tools.rigtoolbox.core import consts
+
+LOGGER = logging.getLogger(consts.TOOL_ID)
 
 
 def get_toolbox_widgets(client, commands_data, parent=None):
@@ -50,20 +47,31 @@ def get_toolbox_widgets(client, commands_data, parent=None):
     except Exception:
         LOGGER.exception('Error while creating skinning widget: "{}"'.format(traceback.format_exc()))
 
-    # try:
-    #     from tpRigToolkit.tools.rigtoolbox.dccs.maya.widgets import rename
-    #     rename_widget = rename.RenameWidget()
-    #     rename_widget.setParent(parent)
-    #     all_widgets.append(rename_widget)
-    # except Exception:
-    #     LOGGER.exception('Error while creating renamer widget: "{}"'.format(traceback.format_exc()))
-    #
-    # try:
-    #     from tpRigToolkit.tools.rigtoolbox.dccs.maya.widgets import control
-    #     control_widget = control.ControlWidget()
-    #     control_widget.setParent(parent)
-    #     all_widgets.append(control_widget)
-    # except Exception:
-    #     LOGGER.exception('Error while creating control widget: "{}"'.format(traceback.format_exc()))
+    try:
+        from tpRigToolkit.tools.rigtoolbox.dccs.maya.widgets import rename
+        client.setup_renamer_client()
+        rename_widget = rename.RenameWidget()
+        rename_widget.setParent(parent)
+        all_widgets.append(rename_widget)
+    except Exception:
+        LOGGER.exception('Error while creating renamer widget: "{}"'.format(traceback.format_exc()))
+
+    try:
+        from tpRigToolkit.tools.rigtoolbox.dccs.maya.widgets import control
+        client.setup_control_rig_client()
+        control_widget = control.ControlWidget()
+        control_widget.setParent(parent)
+        all_widgets.append(control_widget)
+    except Exception:
+        LOGGER.exception('Error while creating control widget: "{}"'.format(traceback.format_exc()))
+
+    try:
+        from tpRigToolkit.tools.rigtoolbox.dccs.maya.widgets import symmesh
+        client.setup_symmesh_client()
+        symmesh_widget = symmesh.SymmeshWidget()
+        symmesh_widget.setParent(parent)
+        all_widgets.append(symmesh_widget)
+    except Exception:
+        LOGGER.exception('Error while creating symmesh widget: "{}"'.format(traceback.format_exc()))
 
     return all_widgets

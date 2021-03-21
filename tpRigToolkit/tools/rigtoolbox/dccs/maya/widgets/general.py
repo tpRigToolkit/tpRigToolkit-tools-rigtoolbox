@@ -89,6 +89,9 @@ class GeneralWidgetController(object):
     def unlock_visibility(self):
         return self._client.unlock_visibility()
 
+    def clean_student_license(self):
+        return self._client.clean_student_license()
+
     def match_transform(self):
         return self._client.match_transform()
 
@@ -111,11 +114,18 @@ class GeneralWidgetController(object):
     def separate_meshes(self):
         return self._client.separate_meshes()
 
-    def mirror_mesh(self):
-        return self._client.mirror_mesh()
+    def mirror_meshes(self):
+        return self._client.mirror_meshes()
+
+    def mirror_meshes_options(self):
+        return self._client.mirror_meshes_options()
+
 
     def open_symmetry_tool(self):
         return self._client.open_symmetry_tool()
 
     def detach_components(self):
         return self._client.detach_components()
+
+    def curve_from_edge_loop(self):
+        return self._client.curve_from_edge_loop()

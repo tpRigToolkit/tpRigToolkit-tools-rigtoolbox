@@ -12,6 +12,7 @@ import cStringIO
 import traceback
 
 import maya.cmds
+import maya.mel
 
 from tpDcc import dcc
 from tpDcc.libs.python import python, kdtree, bezier
@@ -925,3 +926,104 @@ def unbind_influences(skinned_objects=None, influences_to_unbind=None, delete=Fa
         maya.cmds.delete(influences_to_unbind)
 
     return True
+
+
+@decorators.repeat_static_command(__name__, skip_arguments=True)
+def br_smooth_weights():
+    """
+    Executes Brave Rabbit Smooth Weights command if available
+    :return: bool
+    """
+
+    if not dcc.is_plugin_loaded('brSmoothWeights.mll'):
+        return False
+
+    maya.mel.eval('brSmoothWeightsToolCtx')
+
+    return True
+
+
+@decorators.repeat_static_command(__name__, skip_arguments=True)
+def br_smooth_weights_options():
+    """
+    Opens Brave Rabbit Smooth Weights tool if available
+    :return: bool
+    """
+
+    if not dcc.is_plugin_loaded('brSmoothWeights.mll'):
+        return False
+
+    maya.mel.eval('brSmoothWeightsToolCtx; toolPropertyWindow;')
+
+    return True
+
+
+@decorators.repeat_static_command(__name__, skip_arguments=True)
+def br_transfer_weights():
+    """
+    Executes Brave Rabbit Transfer Weights command if available
+    :return: bool
+    """
+
+    plugin_name = 'brSmoothWeights.mll'
+    if not dcc.is_plugin_loaded(plugin_name):
+        dcc.load_plugin(plugin_name, quiet=True)
+        if not dcc.is_plugin_loaded(plugin_name):
+            return False
+
+    maya.mel.eval('brTransferWeightsToolCtx')
+
+    return True
+
+
+@decorators.repeat_static_command(__name__, skip_arguments=True)
+def br_transfer_weights_options():
+    """
+    Opens Brave Rabbit Transfer Weights tool if available
+    :return: bool
+    """
+
+    plugin_name = 'brSmoothWeights.mll'
+    if not dcc.is_plugin_loaded(plugin_name):
+        dcc.load_plugin(plugin_name, quiet=True)
+        if not dcc.is_plugin_loaded(plugin_name):
+            return False
+        return False
+
+    maya.mel.eval('brTransferWeightsToolCtx; toolPropertyWindow;')
+
+    return True
+
+
+@decorators.repeat_static_command(__name__, skip_arguments=True)
+def ng_skin_tools():
+    """
+    Opens ngSkinTools tool if available
+    First, we try to open ngSkinTools2 and if it is not available, we launch ngSkinTools1
+    :return: bool
+    """
+
+    plugin_names = ['ngSkinTools2.mll', 'ngSkinTools.mll']
+    for plugin_name in plugin_names:
+        if not dcc.is_plugin_loaded(plugin_name):
+            dcc.load_plugin(plugin_name, quiet=True)
+        if dcc.is_plugin_loaded(plugin_name):
+            if plugin_name == 'ngSkinTools2.mll':
+                try:
+                    import ngSkinTools2
+                    ngSkinTools2.open_ui()
+                    return True
+                except Exception as exc:
+                    LOGGER.warning(
+                        'Impossible to launch ngSkinTool2. Trying to launch ngSkinTools1: "{}"'.format(exc))
+                    continue
+            else:
+                try:
+                    from ngSkinTools.ui.mainwindow import MainWindow
+                    MainWindow.open()
+                    return True
+                except Exception as exc:
+                    'Impossible to launch ngSkinTool1: "{}"'.format(exc)
+                    continue
+
+    return False

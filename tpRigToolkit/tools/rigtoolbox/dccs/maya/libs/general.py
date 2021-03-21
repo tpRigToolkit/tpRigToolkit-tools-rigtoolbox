@@ -10,11 +10,12 @@ from __future__ import print_function, division, absolute_import
 import re
 
 import maya.cmds
+import maya.mel
 
 from tpDcc import dcc
 from tpDcc.managers import tools
 from tpDcc.libs.python import python
-from tpDcc.dccs.maya.core import decorators, transform as xform_utils
+from tpDcc.dccs.maya.core import decorators, transform as xform_utils, curve as curve_utils
 
 from tpRigToolkit.tools.rigtoolbox.widgets import library
 
@@ -715,8 +716,25 @@ def mirror_mesh(mesh=None):
                 dcc.set_parent(mirror_geo, parent_node)
             out_dict['result'].append(mirror_geo)
         except Exception as exc:
-            out_dict['msg'] = 'Was not possible to mirror meshes "{}" : '.format(meshes, exc)
+            out_dict['msg'] = 'Was not possible to mirror meshes "{}" : {}'.format(meshes, exc)
             return out_dict
+
+    out_dict['success'] = True
+
+    return out_dict
+
+
+@decorators.undo
+@decorators.repeat_static_command(__name__, skip_arguments=True)
+def open_mirror_meshes_options():
+
+    out_dict = {'success': False}
+
+    try:
+        maya.mel.eval('MirrorPolygonGeometryOptions')
+    except Exception as exc:
+        out_dict['msg'] = 'Was not possible to open mirror meshes options : {}'.format(exc)
+        return out_dict
 
     out_dict['success'] = True
 
@@ -805,6 +823,33 @@ def detach_edges(edges=None):
         out_dict['msg'] = 'Was not possible to detach edges "{}" : '.format(valid_edges, exc)
         return out_dict
 
+    out_dict['success'] = True
+
+    return out_dict
+
+
+@decorators.undo
+@decorators.repeat_static_command(__name__, skip_arguments=True)
+def create_curve_from_mesh_edge_loop(mesh_edge_list=None):
+    """
+    Creates new curve from given mesh edge loop
+    """
+
+    out_dict = {'success': False, 'result': list()}
+
+    if not mesh_edge_list:
+        mesh_edge_list = maya.cmds.ls(sl=True, flatten=True)
+    if not mesh_edge_list:
+        out_dict['msg'] = 'No mesh edge loop to create curve from.'
+        return out_dict
+
+    try:
+        new_curve = curve_utils.create_curve_from_mesh_edge_loop(mesh_edge_list=mesh_edge_list)
+    except Exception as exc:
+        out_dict['msg'] = 'Was not possible to create curve from list of edges: {}'.format(exc)
+        return out_dict
+
+    out_dict['result'] = new_curve
     out_dict['success'] = True
 
     return out_dict

@@ -20,12 +20,91 @@ from tpDcc.core import server
 from tpDcc.libs.python import path as path_utils
 from tpDcc.dccs.maya.core import helpers
 
+from tpDcc.tools.renamer.core import tool as renamer_tool
+from tpDcc.tools.renamer.dccs.maya import server as renamer_server
+
+
+from tpRigToolkit.tools.controlrig.core import tool as controlrig_tool
+from tpRigToolkit.tools.controlrig.dccs.maya import server as controlrig_server
+from tpRigToolkit.tools.jointorient.core import tool as jointorient_tool
+from tpRigToolkit.tools.jointorient.dccs.maya import server as jointorient_server
+from tpRigToolkit.tools.symmesh.core import tool as symmesh_tool
+from tpRigToolkit.tools.symmesh.dccs.maya import server as symmesh_server
+
 from tpRigToolkit.tools.rigtoolbox.dccs.maya.libs import general, joint, skin
 
 
 class RigToolboxServer(server.DccServer, object):
 
     PORT = 19344
+
+    def __init__(self, *args, **kwargs):
+        super(RigToolboxServer, self).__init__(*args, **kwargs)
+
+        self._renamer_client = None
+        self._control_rig_client = None
+        self._orient_joint_client = None
+        self._symmesh_client = None
+
+    # =================================================================================================================
+    # RENAMER
+    # =================================================================================================================
+
+    def setup_renamer_client(self, data, reply):
+        if not self._renamer_client:
+            self._renamer_client = dcc.client(renamer_tool.RenamerTool.ID)
+        try:
+            try:
+                self._renamer_client.close_connection()
+            except Exception:
+                pass
+            self._renamer_client = renamer_server.RenamerServer()
+        except Exception:
+            print('Error while setting up renamer server: '.format(traceback.format_exc()))
+
+        reply['success'] = True
+
+    def setup_control_rig_client(self, data, reply):
+        if not self._control_rig_client:
+            self._control_rig_client = dcc.client(controlrig_tool.ControlRigTool.ID)
+        try:
+            try:
+                self._control_rig_client.close_connection()
+            except Exception:
+                pass
+            self._control_rig_client = controlrig_server.ControlRigServer()
+        except Exception:
+            print('Error while setting up control rig server: '.format(traceback.format_exc()))
+
+        reply['success'] = True
+
+    def setup_orient_joint_client(self, data, reply):
+        if not self._orient_joint_client:
+            self._orient_joint_client = dcc.client(jointorient_tool.JointOrientTool.ID)
+        try:
+            try:
+                self._orient_joint_client.close_connection()
+            except Exception:
+                pass
+            self._orient_joint_client = jointorient_server.JointOrientServer()
+        except Exception:
+            print('Error while setting up joint orient server: '.format(traceback.format_exc()))
+
+        reply['success'] = True
+
+    def setup_symmesh_client(self, data, reply):
+        if not self._symmesh_client:
+            self._symmesh_client = dcc.client(symmesh_tool.SymMeshTool.ID)
+        try:
+            try:
+                self._symmesh_client.close_connection()
+            except Exception:
+                pass
+            self._symmesh_client = symmesh_server.SymmeshServer()
+        except Exception:
+            print('Error while setting up symmesh server: '.format(traceback.format_exc()))
+
+        reply['success'] = True
 
     # =================================================================================================================
     # GENERAL
@@ -182,6 +261,18 @@ class RigToolboxServer(server.DccServer, object):
                     traceback.format_exc())
             reply['success'] = False
 
+    def clean_student_license(self, data, reply):
+        file_path = data.get('file_path', None)
+
+        try:
+            helpers.clean_student_line(file_path)
+            reply['success'] = True
+        except Exception:
+            if not reply['msg']:
+                reply['msg'] = 'Something went wrong while cleaning student license: {}'.format(
+                    traceback.format_exc())
+            reply['success'] = False
+
     def match_transform(self, data, reply):
         source_transform = data['source_transform']
         target_transform = data['target_transform']
@@ -253,15 +344,24 @@ class RigToolboxServer(server.DccServer, object):
                 reply['msg'] = 'Something went wrong while separating meshes: {}'.format(traceback.format_exc())
             reply['success'] = False
 
-    def mirror_mesh(self, data, reply):
-        mesh = data['mesh']
+    def mirror_meshes(self, data, reply):
+        meshes = data['meshes']
 
         try:
-            result = general.mirror_mesh(mesh)
+            result = general.mirror_mesh(meshes)
             reply.update(result)
         except Exception:
             if not reply['msg']:
                 reply['msg'] = 'Something went wrong while mirroring mesh: {}'.format(traceback.format_exc())
+            reply['success'] = False
+
+    def mirror_meshes_options(self, data, reply):
+        try:
+            result = general.open_mirror_meshes_options()
+            reply.update(result)
+        except Exception:
+            if not reply['msg']:
+                reply['msg'] = 'Something went wrong while opening mirror mesh options: {}'.format(traceback.format_exc())
             reply['success'] = False
 
     def open_symmetry_tool(self, data, reply):
@@ -282,6 +382,18 @@ class RigToolboxServer(server.DccServer, object):
         except Exception:
             if not reply['msg']:
                 reply['msg'] = 'Something went wrong while detaching components: {}'.format(traceback.format_exc())
+            reply['success'] = False
+
+    def curve_from_edge_loop(self, data, reply):
+        mesh_edge_list = data['mesh_edge_list']
+
+        try:
+            result = general.create_curve_from_mesh_edge_loop(mesh_edge_list)
+            reply.update(result)
+        except Exception:
+            if not reply['msg']:
+                reply['msg'] = 'Something went wrong while creating curve from edge loop: {}'.format(
+                    traceback.format_exc())
             reply['success'] = False
 
     # =================================================================================================================
@@ -309,7 +421,7 @@ class RigToolboxServer(server.DccServer, object):
                                'joints on the center of transforms: {}'.format(traceback.format_exc())
             reply['success'] = False
 
-    def create_joints_on_selected_components_center(self, data, reply):
+    def create_new_joints_on_selected_components(self, data, reply):
         try:
             result = joint.create_joints_on_selected_components_center()
             reply.update(result)
@@ -354,6 +466,243 @@ class RigToolboxServer(server.DccServer, object):
         except Exception:
             if not reply['msg']:
                 reply['msg'] = 'Something went wrong while snapping joints to curve: {}'.format(traceback.format_exc())
+            reply['success'] = False
+
+    def toggle_local_rotation_axis(self, data, reply):
+        joints = data['joints']
+
+        try:
+            result = joint.toggle_local_rotation_axis(joints)
+            reply.update(result)
+        except Exception:
+            if not reply['msg']:
+                reply['msg'] = 'Something went wrong while toggling joints LRA: {}'.format(traceback.format_exc())
+            reply['success'] = False
+
+    def toggle_all_local_rotation_axis(self, data, reply):
+
+        flag = data.get('flag', None)
+
+        try:
+            result = joint.toggle_all_local_rotation_axis(flag=flag)
+            reply.update(result)
+        except Exception:
+            if not reply['msg']:
+                reply['msg'] = 'Something went wrong while toggling all joints LRA: {}'.format(traceback.format_exc())
+            reply['success'] = False
+
+    def toggle_selected_local_rotation_axis(self, data, reply):
+
+        flag = data.get('flag', None)
+
+        try:
+            result = joint.toggle_selected_local_rotation_axis(flag=flag)
+            reply.update(result)
+        except Exception:
+            if not reply['msg']:
+                reply['msg'] = 'Something went wrong while toggling selected joints LRA: {}'.format(traceback.format_exc())
+            reply['success'] = False
+
+    def toggle_joints_xray(self, data, reply):
+        try:
+            result = joint.toggle_joints_xray()
+            reply.update(result)
+        except Exception:
+            if not reply['msg']:
+                reply['msg'] = 'Something went wrong while toggling joints X-Ray: {}'.format(traceback.format_exc())
+            reply['success'] = False
+
+    def set_joints_xray(self, data, reply):
+        flag = data.get('flag', None)
+
+        try:
+            result = joint.set_joints_xray(flag=flag)
+            reply.update(result)
+        except Exception:
+            if not reply['msg']:
+                reply['msg'] = 'Something went wrong while setting joints X-Ray: {}'.format(traceback.format_exc())
+            reply['success'] = False
+
+    def set_joints_display_size(self, data, reply):
+        value = data.get('value', None)
+
+        try:
+            result = joint.set_joints_display_size(value=value)
+            reply.update(result)
+        except Exception:
+            if not reply['msg']:
+                reply['msg'] = 'Something went wrong while setting joints display size: {}'.format(
+                    traceback.format_exc())
+            reply['success'] = False
+
+    def select_hierarchy(self, data, reply):
+        try:
+            result = joint.select_hierarchy()
+            reply.update(result)
+        except Exception:
+            if not reply['msg']:
+                reply['msg'] = 'Something went wrong while selecting joints hierarchy: {}'.format(
+                    traceback.format_exc())
+            reply['success'] = False
+
+    def orient_joints(self, data, reply):
+        try:
+            result = joint.orient_joints()
+            reply.update(result)
+        except Exception:
+            if not reply['msg']:
+                reply['msg'] = 'Something went wrong while orienting joints: {}'.format(
+                    traceback.format_exc())
+            reply['success'] = False
+
+    def orient_all_joints(self, data, reply):
+        try:
+            result = joint.orient_all_joints()
+            reply.update(result)
+        except Exception:
+            if not reply['msg']:
+                reply['msg'] = 'Something went wrong while orienting all scene joints: {}'.format(
+                    traceback.format_exc())
+            reply['success'] = False
+
+    def orient_selected_joints(self, data, reply):
+        try:
+            result = joint.orient_selected_joints()
+            reply.update(result)
+        except Exception:
+            if not reply['msg']:
+                reply['msg'] = 'Something went wrong while orienting selected joints: {}'.format(
+                    traceback.format_exc())
+            reply['success'] = False
+
+    def add_orient_data(self, data, reply):
+        try:
+            result = joint.add_orient_data()
+            reply.update(result)
+        except Exception:
+            if not reply['msg']:
+                reply['msg'] = 'Something went wrong while adding orient data joints: {}'.format(
+                    traceback.format_exc())
+            reply['success'] = False
+
+    def add_orient_data_all_joints(self, data, reply):
+        try:
+            result = joint.orient_all_joints()
+            reply.update(result)
+        except Exception:
+            if not reply['msg']:
+                reply['msg'] = 'Something went wrong while adding orient data to all scene joints: {}'.format(
+                    traceback.format_exc())
+            reply['success'] = False
+
+    def add_orient_data_selected_joints(self, data, reply):
+        try:
+            result = joint.orient_selected_joints()
+            reply.update(result)
+        except Exception:
+            if not reply['msg']:
+                reply['msg'] = 'Something went wrong while adding orient data to selected joints: {}'.format(
+                    traceback.format_exc())
+            reply['success'] = False
+
+    def clean_orient_data(self, data, reply):
+        try:
+            result = joint.clean_orient_data()
+            reply.update(result)
+        except Exception:
+            if not reply['msg']:
+                reply['msg'] = 'Something went wrong while cleaning orient data from joints: {}'.format(
+                    traceback.format_exc())
+            reply['success'] = False
+
+    def clean_orient_data_all_joints(self, data, reply):
+        try:
+            result = joint.clean_orient_data_all_joints()
+            reply.update(result)
+        except Exception:
+            if not reply['msg']:
+                reply['msg'] = 'Something went wrong while cleaning orient data from scene joints: {}'.format(
+                    traceback.format_exc())
+            reply['success'] = False
+
+    def clean_orient_data_selected_joints(self, data, reply):
+        try:
+            result = joint.clean_orient_data_selected_joints()
+            reply.update(result)
+        except Exception:
+            if not reply['msg']:
+                reply['msg'] = 'Something went wrong while cleaning orient data from selected joints: {}'.format(
+                    traceback.format_exc())
+            reply['success'] = False
+
+    def zero_joint_orient(self, data, reply):
+        try:
+            result = joint.zero_joint_orient()
+            reply.update(result)
+        except Exception:
+            if not reply['msg']:
+                reply['msg'] = 'Something went wrong while zeroing out orient of joints: {}'.format(
+                    traceback.format_exc())
+            reply['success'] = False
+
+    def zero_joint_orient_all_joints(self, data, reply):
+        try:
+            result = joint.zero_joint_orient_all_joints()
+            reply.update(result)
+        except Exception:
+            if not reply['msg']:
+                reply['msg'] = 'Something went wrong while zeroing out orient of all joints in current scene: {}'.format(
+                    traceback.format_exc())
+            reply['success'] = False
+
+    def zero_joint_orient_selected_joints(self, data, reply):
+        try:
+            result = joint.zero_joint_orient_selected_joints()
+            reply.update(result)
+        except Exception:
+            if not reply['msg']:
+                reply['msg'] = 'Something went wrong while zeroing out orient of selected joints: {}'.format(
+                    traceback.format_exc())
+            reply['success'] = False
+
+    def mirror_joints(self, data, reply):
+        try:
+            result = joint.mirror_joints()
+            reply.update(result)
+        except Exception:
+            if not reply['msg']:
+                reply['msg'] = 'Something went wrong while mirroring joints: {}'.format(
+                    traceback.format_exc())
+            reply['success'] = False
+
+    def mirror_all_joints(self, data, reply):
+        try:
+            result = joint.mirror_all_joints()
+            reply.update(result)
+        except Exception:
+            if not reply['msg']:
+                reply['msg'] = 'Something went wrong while mirroring all joints in current scene: {}'.format(
+                    traceback.format_exc())
+            reply['success'] = False
+
+    def mirror_selected_joints(self, data, reply):
+        try:
+            result = joint.mirror_selected_joints()
+            reply.update(result)
+        except Exception:
+            if not reply['msg']:
+                reply['msg'] = 'Something went wrong while mirroring selected joints: {}'.format(
+                    traceback.format_exc())
+            reply['success'] = False
+
+    def mirror_hierarchy_joints(self, data, reply):
+        try:
+            result = joint.mirror_hierarchy_joints()
+            reply.update(result)
+        except Exception:
+            if not reply['msg']:
+                reply['msg'] = 'Something went wrong while mirroring hierarchy joints: {}'.format(
+                    traceback.format_exc())
             reply['success'] = False
 
     # =================================================================================================================
@@ -647,6 +996,28 @@ class RigToolboxServer(server.DccServer, object):
 
         success = skin.delete_influences(
             skinned_objects=mesh_nodes, influences_to_remove=influences_to_remove, fast=fast_delete)
+
+        reply['success'] = success
+
+    def br_smooth_weights(self, data, reply):
+
+        options = data.get('options', False)
+
+        success = skin.br_smooth_weights_options() if options else skin.br_smooth_weights()
+
+        reply['success'] = success
+
+    def br_transfer_weights(self, data, reply):
+
+        options = data.get('options', False)
+
+        success = skin.br_smooth_weights_options() if options else skin.br_transfer_weights()
+
+        reply['success'] = success
+
+    def ng_skin_tools(self, data, reply):
+
+        success = skin.ng_skin_tools()
 
         reply['success'] = success
 
